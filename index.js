@@ -9,7 +9,7 @@ const fs = require("fs")
 const bot = new Telegraf(process.env.telegramToken)
 
 if(cluster.isWorker){
-    bot.hears(/version/,(ctx)=>ctx.reply("v2"))
+    bot.hears(/version/i,(ctx)=>ctx.reply("v3"))
     bot.hears(/update/i, (ctx) => {
         exec("git pull",(error, stdout, stderr) => {
             if (error) {
@@ -18,9 +18,9 @@ if(cluster.isWorker){
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                console.log("this is a new version 2")
+                console.log("this is a new version 4")
                 process.exit();
-                return;
+
             }
             console.log(`stdout: ${stdout}`);
         });
