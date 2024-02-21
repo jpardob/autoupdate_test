@@ -17,12 +17,13 @@ if(cluster.isWorker){
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
+                console.log("this is a new version")
+                process.exit();
                 return;
             }
             console.log(`stdout: ${stdout}`);
         });
-        console.log("this is a new version 3")
-        process.exit();
+        
     })
     bot.on(message("document"),(ctx)=>{
         let document = ctx.update.message.document;
