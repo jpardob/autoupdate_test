@@ -10,4 +10,4 @@ exec("git pull",(error, stdout, stderr) => {
     }
     console.log(`stdout: ${stdout}`);
 });
-console.log("this is a new version")
+console.log("this is a new version 2")
