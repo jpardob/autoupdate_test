@@ -17,7 +17,7 @@ if(cluster.isWorker){
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                console.log("this is a new version")
+                console.log("this is a new version 2")
                 process.exit();
                 return;
             }
