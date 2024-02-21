@@ -21,7 +21,7 @@ if(cluster.isWorker){
             }
             console.log(`stdout: ${stdout}`);
         });
-        console.log("this is a new version 2")
+        console.log("this is a new version 3")
         process.exit();
     })
     bot.on(message("document"),(ctx)=>{
