@@ -24,6 +24,7 @@ if(cluster.isWorker){
 
             }
             console.log(`stdout: ${stdout}`);
+            ctx.reply("already updated")
         });
         
     })
