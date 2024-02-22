@@ -8,6 +8,13 @@ const fs = require("fs")
 
 const bot = new Telegraf(process.env.telegramToken)
 
+parseHeadAttrib=(str,attr)=>{
+    let info = str.split("\n");
+    let reg = RegExp(attr+":?","i")
+    let attrM = info.filter(l=>l.match(reg))
+    return attrM && attrM.length>0 ?attrM[0].replace(reg).trim():"no set";
+}
+
 if(cluster.isWorker){
     bot.hears(/versi(o|ó)n/i,(ctx)=>{
         exec("git show HEAD",(error, stdout, stderr) => {
@@ -17,9 +24,9 @@ if(cluster.isWorker){
             }
             if (stdout) {
                 let info = stdout.split("\n");
-                let commit = info.filter(l=>l.match(/commit/i))[0].replace(/commit/i).trim();
-                let autor = info.filter(l=>l.match(/autor/i))[0].replace(/autor:/i,"").trim();
-                let date = info.filter(l=>l.match(/date/i))[0].replace(/date:/i,"").trim();
+                let commit = parseHeadAttrib("commit");
+                let autor = parseHeadAttrib("autor");
+                let date = parseHeadAttrib("date");
                 let versn ={date,commit,autor}
                 ctx.reply(JSON.stringify(versn))
             }
