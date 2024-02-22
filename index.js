@@ -8,11 +8,22 @@ const fs = require("fs")
 
 const bot = new Telegraf(process.env.telegramToken)
 
+formatJson = (json) =>{
+    let count=0;
+
+    return JSON.stringify(json).replace(/{|}|"(\\"|[^"])*"(:|,)?/g,e=>{
+    if(e=="}")count--; 
+    let pad = [...Array(count).keys()].map(e=>"   ").join("")
+    if(e=="{")count++; 
+    return pad+e+"\n"}).replace(/(?<=:)\n\s*(?=({|"(\\"|[^"])*"|(\d+)))/g," ")
+
+}
+
 parseHeadAttrib=(str,attr)=>{
     let info = str.split("\n");
     let reg = RegExp(attr+":?","i")
     let attrM = info.filter(l=>l.match(reg))
-    return attrM && attrM.length>0 ?attrM[0].replace(reg).trim():"no set";
+    return attrM && attrM.length>0 ?attrM[0].replace(reg,"").trim():"no set";
 }
 
 if(cluster.isWorker){
@@ -24,11 +35,11 @@ if(cluster.isWorker){
             }
             if (stdout) {
                 let info = stdout.split("\n");
-                let commit = parseHeadAttrib("commit");
-                let autor = parseHeadAttrib("autor");
-                let date = parseHeadAttrib("date");
-                let versn ={date,commit,autor}
-                ctx.reply(JSON.stringify(versn))
+                let commit = parseHeadAttrib(stdout,"commit");
+                let author = parseHeadAttrib(stdout,"author");
+                let date = parseHeadAttrib(stdout,"date");
+                let versn ={date,commit,author}
+                ctx.reply(formatJson(versn))
             }
         });
     })
