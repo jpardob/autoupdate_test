@@ -9,7 +9,22 @@ const fs = require("fs")
 const bot = new Telegraf(process.env.telegramToken)
 
 if(cluster.isWorker){
-    bot.hears(/versi(o|ó)n/i,(ctx)=>ctx.reply("v3"))
+    bot.hears(/versi(o|ó)n/i,(ctx)=>{
+        exec("git show HEAD",(error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stdout) {
+                let info = stdout.split("\n");
+                let commit = info.filter(l=>l.match(/commit/i))[0].replace(/commit/i).trim();
+                let autor = info.filter(l=>l.match(/autor/i))[0].replace(/autor:/i,"").trim();
+                let date = info.filter(l=>l.match(/date/i))[0].replace(/date:/i,"").trim();
+                let versn ={date,commit,autor}
+                ctx.reply(JSON.stringify(versn))
+            }
+        });
+    })
     bot.hears(/update/i, (ctx) => {
         exec("git pull",(error, stdout, stderr) => {
             if (error) {
