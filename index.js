@@ -38,6 +38,13 @@ if(cluster.isWorker){
                 process.exit();
 
             }
+            if (stdout && stdout.match(/Updating/i)) {
+                console.log(`stdout: ${stdout}`);
+                console.log("exit the old version")
+                ctx.reply("updated")
+                process.exit();
+
+            }
             console.log(`stdout: ${stdout}`);
             ctx.reply("already updated")
         });
