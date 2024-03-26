@@ -133,6 +133,7 @@ if(cluster.isWorker){
         let rlink = ctx.match.input.replace(/addlink/i,"").trim();
         if(checkurl(rlink)){
             appendToFile(urlfilepath,rlink);
+            ctx.reply("added")
         }
         
     })
