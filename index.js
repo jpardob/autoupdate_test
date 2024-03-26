@@ -5,8 +5,70 @@ const { Telegraf } = require('telegraf')
 const { message } = require('telegraf/filters')
 const axios = require("axios")
 const fs = require("fs")
+const path = require("path")
+const express = require('express');
+const {HtmlElement} = require("./htmlElement");
+const URL = require("url").URL;
+
+const app = express();
+const port = process.env.PORT || 80;
+
+const urlfilepath=path.join(__dirname,"links.txt")
+
+render = (template,objs)=>{
+    return template.replace(/\{\{\w+\}\}/g,o=>{
+        return objs[o.replace(/\}|\{/g,"")]
+    })
+}
+
+getLinks =()=>{
+  let rawlinks = fs.readFileSync(urlfilepath,{encoding:"utf-8"}).split(/\r\n|\n/).filter(l=>l.trim()!="")
+  return rawlinks.map(rl=>{
+    let a=new HtmlElement("a")
+    a.href=rl
+    let n=rl.match(/\/(\w|\_|\-)+$/g)
+    a.innerHtml=(n && n[0])?n[0].replace(/\//g,"").replace(/\_|\-/g," "):`[${rl}]`
+    return `${a.toString()}\n<br>\n`
+  }).join("")
+}
+
+checkurl=(str)=>{
+    try {
+        new URL(str)
+        return true
+    } catch (error) {
+        return false
+    }
+}
+
+var links = getLinks()
+
+// sendFile will go here
+app.get('/', function(req, res) {
+  links = getLinks()
+  //res.sendFile(path.join(__dirname, '/index.html'));
+  let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links})
+  res.send(page)
+});
 
 const bot = new Telegraf(process.env.telegramToken)
+
+const createDir=(dir)=>{
+    if(!fs.existsSync(dir)){
+        fs.mkdirSync(dir)
+    }
+}
+
+createDir(path.join(__dirname,"files"));
+
+appendToFile=(filepath,dat)=>{
+    if(fs.existsSync(filepath)){
+        let rawtxt = fs.readFileSync(filepath,{encoding:"utf-8"})
+        fs.writeFileSync(filepath,`${rawtxt}\n${dat}`,{encoding:"utf-8"})
+    }else{
+        fs.writeFileSync(filepath,dat,{encoding:"utf-8"})
+    }
+}
 
 formatJson = (json) =>{
     let count=0;
@@ -34,7 +96,6 @@ if(cluster.isWorker){
                 return;
             }
             if (stdout) {
-                let info = stdout.split("\n");
                 let commit = parseHeadAttrib(stdout,"commit");
                 let author = parseHeadAttrib(stdout,"author");
                 let date = parseHeadAttrib(stdout,"date");
@@ -68,6 +129,13 @@ if(cluster.isWorker){
         });
         
     })
+    bot.hears(/addlink/i,(ctx)=>{
+        let rlink = ctx.match.input.replace(/addlink/i,"").trim();
+        if(checkurl(rlink)){
+            appendToFile(urlfilepath,rlink);
+        }
+        
+    })
     bot.on(message("document"),(ctx)=>{
         let document = ctx.update.message.document;
         ctx.telegram.getFileLink(document.file_id).then(url => {    
@@ -82,10 +150,13 @@ if(cluster.isWorker){
                         });
                     })
         }) 
-    })    
+    });
     bot.launch()
     process.once('SIGINT', () => bot.stop('SIGINT'))
     process.once('SIGTERM', () => bot.stop('SIGTERM'))
+
+    app.listen(port);
+    console.log('Server started at http://localhost:' + port);
 }
 if(cluster.isMaster){
     cluster.fork();
