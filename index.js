@@ -9,6 +9,8 @@ const path = require("path")
 const express = require('express');
 const {HtmlElement} = require("./htmlElement");
 const URL = require("url").URL;
+const URLparse = require("url").parse;
+const https = require("https")
 
 const app = express();
 const port = process.env.PORT || 80;
@@ -21,15 +23,21 @@ render = (template,objs)=>{
     })
 }
 
-getLinks =()=>{
+getLinks =async()=>{
   let rawlinks = fs.readFileSync(urlfilepath,{encoding:"utf-8"}).split(/\r\n|\n/).filter(l=>l.trim()!="")
-  return rawlinks.map(rl=>{
+  let s=await Promise.all(rawlinks.map(async rl=>{
+    let img=new HtmlElement("img")
+    img.src= await getCover(rl)
+    let div=new HtmlElement("div")
+    div.setClass("acard")
     let a=new HtmlElement("a")
     a.href=rl
     let n=rl.match(/\/(\w|\_|\-)+$/g)
     a.innerHtml=(n && n[0])?n[0].replace(/\//g,"").replace(/\_|\-/g," "):`[${rl}]`
-    return `${a.toString()}\n<br>\n`
-  }).join("")
+    div.innerHtml=[a,img]
+    return `${div.toString()}\n<br>\n`
+  }))
+  return s.join("")
 }
 
 checkurl=(str)=>{
@@ -41,11 +49,38 @@ checkurl=(str)=>{
     }
 }
 
+getCover = async(link) =>{
+    let strategies = [
+        {match:/m\.animeflv\.net/i, finder:async(link)=>{
+            return new Promise((resolve,reject)=>{
+                https.get(link, (res) => {
+                let rawHtml = '';
+                res.on('data', (chunk) => { rawHtml += chunk; });
+                res.on('end', () => {
+                        try {
+                        let cover = rawHtml.match(/\/uploads\/animes\/covers\/\w+\.jpg/)[0];
+                        resolve(`https://m.animeflv.net/${cover}`)
+                        } catch (e) {
+                            reject(e.message);
+                        }
+                    });
+                });
+            })
+        }},
+    ]
+    let strat = strategies.filter(stra=>link.match(stra.match))
+    if(strat.length>0){
+        return strat[0].finder(link)
+    }
+}
+
+//getCover("https://m.animeflv.net/anime/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito")
+
 var links = getLinks()
 
 // sendFile will go here
-app.get('/', function(req, res) {
-  links = getLinks()
+app.get('/', async function(req, res) {
+  links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links})
   res.send(page)
