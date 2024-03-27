@@ -1,5 +1,6 @@
 class HtmlElement{
     href;
+    src;
     id;
     class=[];
     type;
@@ -24,7 +25,7 @@ class HtmlElement{
         this.class=classes;
     }
     toString(){
-        return `<${this.type}${this.keyText("id",this.id)}${this.keyText("href",this.href)}${this.keyText("class",this.class)}>${this.innerHtml?this.innerHtml:""}</${this.type}>`
+        return `<${this.type}${this.keyText("id",this.id)}${this.keyText("href",this.href)}${this.keyText("src",this.src)}${this.keyText("class",this.class)}>${this.innerHtml?(this.innerHtml instanceof(Array))?this.innerHtml.join("\n"):this.innerHtml:""}</${this.type}>`
     }
 };
 module.exports={
