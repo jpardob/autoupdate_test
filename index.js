@@ -28,14 +28,29 @@ getLinks =async()=>{
   let s=await Promise.all(rawlinks.map(async rl=>{
     let img=new HtmlElement("img")
     img.src= await getCover(rl)
-    let div=new HtmlElement("div")
-    div.setClass("acard")
+
+    let card=new HtmlElement("div")
+    card.setClass("card")
+    let divimg=new HtmlElement("div")
+    divimg.setClass("image")
+    let divtit=new HtmlElement("div")
+    divtit.setClass("title")
+    let divdesc=new HtmlElement("div")
+    divdesc.setClass("descript")
+
+    divimg.innerHtml=[img]
+
     let a=new HtmlElement("a")
     a.href=rl
+
     let n=rl.match(/\/(\w|\_|\-)+$/g)
-    a.innerHtml=(n && n[0])?n[0].replace(/\//g,"").replace(/\_|\-/g," "):`[${rl}]`
-    div.innerHtml=[a,img]
-    return `${div.toString()}\n<br>\n`
+    divtit.innerHtml=(n && n[0])?n[0].replace(/\//g,"").replace(/\_|\-/g," "):`[${rl}]`
+
+    card.innerHtml=[divimg,divtit,divdesc]
+
+    a.innerHtml=[card]
+    
+    return `${a.toString()}\n<br>\n`
   }))
   return s.join("")
 }
