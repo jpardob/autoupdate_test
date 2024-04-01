@@ -50,7 +50,7 @@ getLinks =async()=>{
 
     a.innerHtml=[card]
     
-    return `${a.toString()}\n<br>\n`
+    return `${a.toString()}\n`
   }))
   return s.join("")
 }
