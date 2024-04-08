@@ -16,11 +16,19 @@ const app = express();
 const port = process.env.PORT || 80;
 
 const urlfilepath=path.join(__dirname,"links.txt")
+const jsondataname="jsondata.json"
 
 render = (template,objs)=>{
     return template.replace(/\{\{\w+\}\}/g,o=>{
         return objs[o.replace(/\}|\{/g,"")]
     })
+}
+
+setJson=(obj)=>{
+    fs.writeFileSync(path.join(__dirname,jsondataname),JSON.stringify(obj),{encoding:"utf-8"})
+}
+getJson=()=>{
+    return JSON.parse(fs.readFileSync(path.join(__dirname,jsondataname),{encoding:"utf-8"}))
 }
 
 getLinks =async()=>{
@@ -82,6 +90,22 @@ getCover = async(link) =>{
                 });
             })
         }},
+        {match:/monoschinos2\.com/i, finder:async(link)=>{
+            return new Promise((resolve,reject)=>{
+                https.get(link, (res) => {
+                let rawHtml = '';
+                res.on('data', (chunk) => { rawHtml += chunk; });
+                res.on('end', () => {
+                        try {
+                        let cover = rawHtml.match(/(?<=<div class="chapterpic">[\S,\s]*<img src=")(.*)\.jpg/g)[0];
+                        resolve(`${cover}`)
+                        } catch (e) {
+                            reject(e.message);
+                        }
+                    });
+                });
+            })
+        }}
     ]
     let strat = strategies.filter(stra=>link.match(stra.match))
     if(strat.length>0){
