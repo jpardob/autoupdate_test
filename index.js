@@ -48,13 +48,19 @@ getLinks =async()=>{
 
     divimg.innerHtml=[img]
 
+    let switchdiv=new HtmlElement("div")
+    switchdiv.setClass("switch")
+    let switchseldiv=new HtmlElement("div")
+    switchdiv.setClass("switchselec")
+    switchdiv.innerHtml=switchseldiv
+
     let a=new HtmlElement("a")
     a.href=rl
 
     let n=rl.match(/\/(\w|\_|\-)+$/g)
     divtit.innerHtml=(n && n[0])?n[0].replace(/\//g,"").replace(/\_|\-/g," "):`[${rl}]`
 
-    card.innerHtml=[divimg,divtit,divdesc]
+    card.innerHtml=[divimg,divtit,divdesc,switchdiv]
 
     a.innerHtml=[card]
     

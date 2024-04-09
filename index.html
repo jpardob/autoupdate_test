@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>my anime list</title>
 </head>
 <style>
     :root{
         --cardwidth:150px;
         --padding:10px;
         --containerpadding:var(--padding);
+        --switchWidth:50px;
+        --switchHeight:30px;
+        --switchRound:20px;
     }
     div.container{
         position: absolute;
@@ -103,6 +106,28 @@
       position: relative;
       width: 100%;
     }
+    div.switch{
+      width: var(--switchWidth);
+      height: var(--switchHeight);
+      background: white;
+      position: absolute;
+      top: 50%;
+      border-radius: calc(var(--switchHeight) / 2);
+    }
+    div.switch div.switchselec{
+      width: var(--switchRound);
+      height: var(--switchRound);
+      background: red;
+      position: absolute;
+      border-radius: calc(var(--switchRound) / 2);
+      top: calc((var(--switchHeight) - var(--switchRound)) / 2);
+      left: calc((var(--switchHeight) - var(--switchRound)) / 2);
+      transition: 200ms;
+    }
+    div.switch div.switchselec.active{
+      background: green;
+      left: calc(100% - ((var(--switchHeight) - var(--switchRound)) / 2) - var(--switchRound));
+    }
 </style>
 <script>
     var r = document.querySelector(':root')
@@ -145,6 +170,17 @@
     }
     let i = document.querySelector("input.searchterm")
     i.addEventListener("keydown",getandsearch)
+
+    let container=document.querySelector("div.container")
+    container.addEventListener("click",e=>{
+      if(e.target.className.match(/switchselec/)){
+        if(e.targer.className.match(/active/)){
+          e.targer.className = e.targer.className.replace(/ active/,"")
+        }else{
+          e.targer.className = e.targer.className+" active"
+        }
+      }
+    })
 </script>
 </body>
 </html>
