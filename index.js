@@ -37,7 +37,7 @@ getJson=()=>{
 
 const link="https://m.animeflv.net";
 
-var episodes = [];
+var episodes = process.env.currentepisodes||[];
 
 getHTML(link).then(e=>{
     let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
@@ -222,9 +222,11 @@ if(cluster.isWorker){
     bot.hears(/givemecontext/i,(ctx)=>{
             ctx.reply(JSON.stringify(ctx.chat))
     })
-    cron.schedule('10 * * * *', () => {
+    /////////specific code////////
+    cron.schedule('5 * * * *', () => {
         getHTML(link);
     });
+    ///////end specific code//////
     bot.on(message("document"),(ctx)=>{
         let document = ctx.update.message.document;
         ctx.telegram.getFileLink(document.file_id).then(url => {    
@@ -247,9 +249,9 @@ if(cluster.isWorker){
     app.listen(port);
     console.log('Server started at http://localhost:' + port);
 }
-if(cluster.isMaster){
+if(cluster.isPrimary){
     cluster.fork();
     cluster.on('exit', function(worker, code, signal) {
-        cluster.fork();
+        cluster.fork({currentepisodes:JSON.stringify(episodes)});
     });
 }
