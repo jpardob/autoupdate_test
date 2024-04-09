@@ -114,6 +114,16 @@
       top: 50%;
       border-radius: calc(var(--switchHeight) / 2);
     }
+    div.switch::after{
+      content: "";
+      width: calc(var(--switchWidth) - (var(--switchHeight) - var(--switchRound)));
+      height: var(--switchRound);
+      background: rgb(102, 102, 102);
+      position: absolute;
+      top: calc((var(--switchHeight) - var(--switchRound)) / 2);
+      left: calc((var(--switchHeight) - var(--switchRound)) / 2);
+      border-radius: calc(var(--switchRound) / 2);
+    }
     div.switch div.switchselec{
       width: var(--switchRound);
       height: var(--switchRound);
