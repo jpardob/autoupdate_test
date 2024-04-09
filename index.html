@@ -117,17 +117,6 @@
         calcpad()
     };
     calcpad()
-
-    let a=[...document.querySelectorAll("div.card")]
-    let e=document.querySelector("div.container")
-
-    let filter =(term)=>{
-      e.innerHTML=a.filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
-    }
-    getandsearch=()=>{
-      filter(document.querySelector("input.searchterm").value)
-    }
-
 </script>
 <body>
 
@@ -141,5 +130,16 @@
     {{links}}
   </div>
     
+<script>
+  let a=[...document.querySelectorAll("div.card")]
+    let e=document.querySelector("div.container")
+
+    let filter =(term)=>{
+      e.innerHTML=a.filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
+    }
+    getandsearch=()=>{
+      filter(document.querySelector("input.searchterm").value)
+    }
+</script>
 </body>
 </html>
