@@ -141,6 +141,30 @@
       left: calc(100% - ((var(--switchHeight) - var(--switchRound)) / 2) - var(--switchRound));
       box-shadow: 0px 0px 2px 2px rgba(0, 255, 17, 0.5);
     }
+    div.switch div.switchselec::after{
+      position: relative;
+      height: calc(100% - 2px);
+      width: calc(100% - 2px);
+      top: 1px;
+      left: 1px;
+      background: inherit;
+    }
+    div.switch div.switchselec::after::after{
+      position: relative;
+      height: calc(100% - 2px);
+      width: calc(100% - 2px);
+      top: 1px;
+      left: 1px;
+      background: inherit;
+    }
+    div.switch div.switchselec::after::after::after{
+      position: relative;
+      height: calc(100% - 2px);
+      width: calc(100% - 2px);
+      top: 1px;
+      left: 1px;
+      background: inherit;
+    }
 </style>
 <script>
     var r = document.querySelector(':root')
