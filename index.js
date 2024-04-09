@@ -218,8 +218,8 @@ if(cluster.isWorker){
         }
         
     })
-    bot.hears(/tellmyid/i,(ctx)=>{
-            ctx.reply(ctx.id)
+    bot.hears(/givemecontext/i,(ctx)=>{
+            ctx.reply(JSON.stringify(ctx))
     })
     cron.schedule('10 * * * *', () => {
         getHTML(link);
