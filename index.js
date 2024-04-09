@@ -32,6 +32,27 @@ getJson=()=>{
     return JSON.parse(fs.readFileSync(path.join(__dirname,jsondataname),{encoding:"utf-8"}))
 }
 
+////////////specific web code////////////
+
+const link="https://m.animeflv.net";
+
+var episodes = [];
+
+getHTML(link).then(e=>{
+    let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
+    if (episodes.length==0){
+        episodes=epi
+    }else{
+        let newepis = episodes.filter(e=>!epi.includes(e))
+        if(newepis.length>0){
+            episodes=epi
+            console.log(newepis)
+        }
+    }
+})
+
+//////////end specific web code//////////
+
 getLinks =async()=>{
   let rawlinks = fs.readFileSync(urlfilepath,{encoding:"utf-8"}).split(/\r\n|\n/).filter(l=>l.trim()!="")
   let s=await Promise.all(rawlinks.map(async rl=>{
@@ -196,6 +217,12 @@ if(cluster.isWorker){
         }
         
     })
+    bot.hears(/tellmyid/i,(ctx)=>{
+            ctx.reply(ctx.id)
+    })
+    cron.schedule('10 * * * *', () => {
+        getHTML(link);
+    });
     bot.on(message("document"),(ctx)=>{
         let document = ctx.update.message.document;
         ctx.telegram.getFileLink(document.file_id).then(url => {    
