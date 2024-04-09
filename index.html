@@ -91,6 +91,13 @@
         background: linear-gradient(0deg, rgb(255, 255, 255) 50%, rgba(0,212,255,0) 100%);
         content:""
     }
+    div.searchzone{
+      position: absolute;
+      left: calc(50vw - 100px);
+      top: 0;
+      width: 200px;
+      height: 30px;
+    }
 </style>
 <script>
     var r = document.querySelector(':root')
@@ -111,6 +118,7 @@
     calcpad()
 
     let a=[...document.querySelectorAll("div.card")]
+    let e=document.querySelector("div.container")
 
     let filter =(term)=>{
       e.innerHTML=a.filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
