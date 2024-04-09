@@ -37,10 +37,10 @@
         transition: transform 100ms;
     }
     div.card:hover{
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
     div.card:active{
-        transform: scale(0.9);
+        transform: scale(0.98);
     }
     div.card div.image{
         position: absolute;
@@ -185,6 +185,10 @@
     container.addEventListener("click",e=>{
       if(e.target.classList.contains("switchselec")){
         e.target.classList.toggle("active")
+        e.preventDefault();
+      }
+      if(e.target.classList.contains("switch")){
+        [...e.target.children].filter(d=>d.classList.contains("switchselec"))[0].classList.toggle("active")
         e.preventDefault();
       }
     })
