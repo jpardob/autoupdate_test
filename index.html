@@ -122,7 +122,6 @@
 
   <div class="searchzone">
     <input type="text" class="searchterm">
-    <input type="button" value="search" onclick="getandsearch()">
   </div>
   
 
@@ -140,6 +139,8 @@
     getandsearch=()=>{
       filter(document.querySelector("input.searchterm").value)
     }
+    let i = document.querySelector("input.searchterm")
+    i.addEventListener("keydown",getandsearch)
 </script>
 </body>
 </html>
