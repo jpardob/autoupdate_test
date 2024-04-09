@@ -51,7 +51,7 @@ getLinks =async()=>{
     let switchdiv=new HtmlElement("div")
     switchdiv.setClass("switch")
     let switchseldiv=new HtmlElement("div")
-    switchdiv.setClass("switchselec")
+    switchseldiv.setClass("switchselec")
     switchdiv.innerHtml=switchseldiv
 
     let a=new HtmlElement("a")
