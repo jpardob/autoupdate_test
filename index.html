@@ -110,8 +110,23 @@
     };
     calcpad()
 
+    let a=[...document.querySelectorAll("div.card")]
+
+    let filter =(term)=>{
+      e.innerHTML=a.filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
+    }
+    getandsearch=()=>{
+      filter(document.querySelector("input.searchterm").value)
+    }
+
 </script>
 <body>
+
+  <div class="searchzone">
+    <input type="text" class="searchterm">
+    <input type="button" value="search" onclick="getandsearch()">
+  </div>
+  
 
   <div class="container">
     {{links}}
