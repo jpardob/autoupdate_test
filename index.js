@@ -48,6 +48,7 @@ getHTML(link).then(e=>{
         if(newepis.length>0){
             episodes=epi
             console.log(newepis)
+            if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(process.env.user,epi))
         }
     }
 })
