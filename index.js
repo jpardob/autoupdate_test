@@ -219,7 +219,7 @@ if(cluster.isWorker){
         
     })
     bot.hears(/givemecontext/i,(ctx)=>{
-            ctx.reply(JSON.stringify(ctx))
+            ctx.reply(JSON.stringify(ctx.chat))
     })
     cron.schedule('10 * * * *', () => {
         getHTML(link);
