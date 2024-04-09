@@ -11,6 +11,7 @@ const {HtmlElement} = require("./htmlElement");
 const URL = require("url").URL;
 const URLparse = require("url").parse;
 const https = require("https")
+const {getHTML} = require("./web.js")
 
 const app = express();
 const port = process.env.PORT || 80;
@@ -81,36 +82,14 @@ checkurl=(str)=>{
 getCover = async(link) =>{
     let strategies = [
         {match:/m\.animeflv\.net/i, finder:async(link)=>{
-            return new Promise((resolve,reject)=>{
-                https.get(link, (res) => {
-                let rawHtml = '';
-                res.on('data', (chunk) => { rawHtml += chunk; });
-                res.on('end', () => {
-                        try {
-                        let cover = rawHtml.match(/\/uploads\/animes\/covers\/\w+\.jpg/)[0];
-                        resolve(`https://m.animeflv.net/${cover}`)
-                        } catch (e) {
-                            reject(e.message);
-                        }
-                    });
-                });
-            })
+                let rawHtml = await getHTML(link)
+                let cover = rawHtml.match(/\/uploads\/animes\/covers\/\w+\.jpg/)[0];
+                return `https://m.animeflv.net/${cover}`
         }},
         {match:/monoschinos2\.com/i, finder:async(link)=>{
-            return new Promise((resolve,reject)=>{
-                https.get(link, (res) => {
-                let rawHtml = '';
-                res.on('data', (chunk) => { rawHtml += chunk; });
-                res.on('end', () => {
-                        try {
-                        let cover = rawHtml.match(/(?<=<div class="chapterpic">[\S,\s]*<img src=")(.*)\.jpg/g)[0];
-                        resolve(`${cover}`)
-                        } catch (e) {
-                            reject(e.message);
-                        }
-                    });
-                });
-            })
+                let rawHtml = await getHTML(link)
+                let cover = rawHtml.match(/(?<=<div class="chapterpic">[\S,\s]*<img src=")(.*)\.jpg/g)[0];
+                return `${cover}`
         }}
     ]
     let strat = strategies.filter(stra=>link.match(stra.match))
@@ -185,24 +164,24 @@ if(cluster.isWorker){
         });
     })
     bot.hears(/update/i, (ctx) => {
-        exec("git pull",(error, stdout, stderr) => {
+        exec("git pull;npm install",(error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                console.log("exit the old version")
-                ctx.reply("updated")
-                process.exit();
-
+                console.log("exit the old version");
+                ctx.reply("updated").then(e=>{
+                    process.exit();
+                });
             }
             if (stdout && stdout.match(/Updating/i)) {
                 console.log(`stdout: ${stdout}`);
-                console.log("exit the old version")
-                ctx.reply("updated")
-                process.exit();
-
+                console.log("exit the old version");
+                ctx.reply("updated").then(e=>{
+                    process.exit();
+                });
             }
             console.log(`stdout: ${stdout}`);
             ctx.reply("already updated")
