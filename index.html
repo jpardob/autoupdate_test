@@ -175,10 +175,10 @@
     container.addEventListener("click",e=>{
       if(e.target.className.match(/switchselec/)){
         e.preventDefault();
-        if(e.targer.className.match(/active/)){
-          e.targer.className = e.targer.className.replace(/ active/,"")
+        if(e.target.className.match(/active/)){
+          e.target.className = e.target.className.replace(/ active/,"")
         }else{
-          e.targer.className = e.targer.className+" active"
+          e.target.className = e.target.className+" active"
         }
         
       }
