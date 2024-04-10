@@ -37,7 +37,7 @@ getJson=()=>{
 
 const link="https://m.animeflv.net";
 
-var episodes = process.env.currentepisodes||[];
+var episodes = JSON.parse(process.env.currentepisodes)||[];
 
 const notify = ()=>{
     getHTML(link).then(e=>{
@@ -49,7 +49,7 @@ const notify = ()=>{
             if(newepis.length>0){
                 episodes=epi
                 console.log(newepis)
-                if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(process.env.user,epi))
+                if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(parseInt(process.env.user),epi))
             }
         }
     })
@@ -200,6 +200,7 @@ if(cluster.isWorker){
                 ctx.reply("updated").then(e=>{
                     process.exit();
                 });
+                return;
             }
             if (stdout && stdout.match(/Updating/i)) {
                 console.log(`stdout: ${stdout}`);
@@ -207,6 +208,7 @@ if(cluster.isWorker){
                 ctx.reply("updated").then(e=>{
                     process.exit();
                 });
+                return;
             }
             console.log(`stdout: ${stdout}`);
             ctx.reply("already updated")
@@ -238,8 +240,12 @@ if(cluster.isWorker){
                                 .on('finish', () => {
                                     console.log("saved");
                                     ctx.reply("saved")
+                                    resolve(true)
                             })
-                                .on('error', e => console.log(e))
+                                .on('error', e =>{ 
+                                    console.log(e);
+                                    reject(false)
+                                })
                         });
                     })
         }) 
