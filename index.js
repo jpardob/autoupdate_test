@@ -45,7 +45,7 @@ const notify = ()=>{
         if (episodes.length==0){
             episodes=epi
         }else{
-            let newepis = episodes.filter(e=>!epi.includes(e))
+            let newepis = epi.filter(e=>!episodes.includes(e))
             if(newepis.length>0){
                 episodes=epi
                 console.log(newepis)
