@@ -39,19 +39,21 @@ const link="https://m.animeflv.net";
 
 var episodes = process.env.currentepisodes||[];
 
-getHTML(link).then(e=>{
-    let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
-    if (episodes.length==0){
-        episodes=epi
-    }else{
-        let newepis = episodes.filter(e=>!epi.includes(e))
-        if(newepis.length>0){
+const notify = ()=>{
+    getHTML(link).then(e=>{
+        let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
+        if (episodes.length==0){
             episodes=epi
-            console.log(newepis)
-            if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(process.env.user,epi))
+        }else{
+            let newepis = episodes.filter(e=>!epi.includes(e))
+            if(newepis.length>0){
+                episodes=epi
+                console.log(newepis)
+                if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(process.env.user,epi))
+            }
         }
-    }
-})
+    })
+}
 
 //////////end specific web code//////////
 
@@ -223,8 +225,8 @@ if(cluster.isWorker){
             ctx.reply(JSON.stringify(ctx.chat))
     })
     /////////specific code////////
-    cron.schedule('5 * * * *', () => {
-        getHTML(link);
+    cron.schedule('*/5 * * * *', () => {
+        notify(link);
     });
     ///////end specific code//////
     bot.on(message("document"),(ctx)=>{
