@@ -37,7 +37,7 @@ getJson=()=>{
 
 const link="https://m.animeflv.net";
 
-var episodes = JSON.parse(process.env.currentepisodes)||[];
+var episodes = JSON.parse(process.env.currentepisodes||"[]");
 
 const notify = ()=>{
     getHTML(link).then(e=>{
