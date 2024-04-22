@@ -199,7 +199,7 @@
     toggleStatus =(saelement)=>{
       saelement.classList.toggle("active")
       let id=saelement.parentElement.parentElement.id
-      let c= a.filter(c=>c.querySelector("div.card").id==id)
+      let c= a.filter(c=>c.querySelector("div.card").id==id)[0]
       if(saelement.classList.contains("active")){
         c.querySelector("div.switchselect").classList.add("active")
       }else{
