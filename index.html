@@ -196,14 +196,25 @@
     let i = document.querySelector("input.searchterm")
     i.addEventListener("keyup",getandsearch)
 
+    toggleStatus =(saelement)=>{
+      saelement.classList.toggle("active")
+      let id=saelement.parentElement.parentElement.id
+      let c= a.filter(c=>c.querySelector("div.card").id==id)
+      if(saelement.classList.contains("active")){
+        c.querySelector("div.switchselect").classList.add("active")
+      }else{
+        c.querySelector("div.switchselect").classList.remove("active")
+      }
+    }
+
     let container=document.querySelector("div.container")
     container.addEventListener("click",e=>{
       if(e.target.classList.contains("switchselec")){
-        e.target.classList.toggle("active")
+        toggleStatus(e.target)
         e.preventDefault();
       }
       if(e.target.classList.contains("switch")){
-        [...e.target.children].filter(d=>d.classList.contains("switchselec"))[0].classList.toggle("active")
+        toggleStatus([...e.target.children].filter(d=>d.classList.contains("switchselec"))[0])
         e.preventDefault();
       }
     })

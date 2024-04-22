@@ -57,6 +57,8 @@ const notify = ()=>{
 
 //////////end specific web code//////////
 
+let crc32 =(r)=>{for(var a,o=[],c=0;c<256;c++){a=c;for(var f=0;f<8;f++)a=1&a?3988292384^a>>>1:a>>>1;o[c]=a}for(var n=-1,t=0;t<r.length;t++)n=n>>>8^o[255&(n^r.charCodeAt(t))];return(-1^n)>>>0};
+
 getLinks =async()=>{
   let rawlinks = fs.readFileSync(urlfilepath,{encoding:"utf-8"}).split(/\r\n|\n/).filter(l=>l.trim()!="")
   let s=await Promise.all(rawlinks.map(async rl=>{
@@ -65,6 +67,7 @@ getLinks =async()=>{
 
     let card=new HtmlElement("div")
     card.setClass("card")
+    card.id=crc32(rl)
     let divimg=new HtmlElement("div")
     divimg.setClass("image")
     let divtit=new HtmlElement("div")
@@ -157,7 +160,7 @@ appendToFile=(filepath,dat)=>{
 formatJson = (json) =>{
     let count=0;
 
-    return JSON.stringify(json).replace(/{|}|"(\\"|[^"])*"(:|,)?/g,e=>{
+    return JSON.stringify(json).replace(/{},|{}|{|}|"(\\"|[^"])*"(:|,)?/g,e=>{
     if(e=="}")count--; 
     let pad = [...Array(count).keys()].map(e=>"   ").join("")
     if(e=="{")count++; 
