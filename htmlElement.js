@@ -13,7 +13,7 @@ class HtmlElement{
             val = val.filter(k=>k&&k.trim()!="")
             return (val.length>0)?` ${key}="${val.join(" ")}"`:""
         }
-        return (val&&val.trim()!="")?` ${key}="${val}"`:""
+        return (val&&val.toString().trim()!="")?` ${key}="${val}"`:""
     }
     getText(){
         return this.innerHtml.toString()
