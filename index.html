@@ -176,6 +176,11 @@
 
   <div class="searchzone">
     <input type="text" class="searchterm">
+    <select name="status" id="sestatus">
+      <option value="all">todo</option>
+      <option value="unseen">pendiente</option>
+      <option value="seen">visto</option>
+    </select>
   </div>
   
 
@@ -186,15 +191,17 @@
 <script>
   let a=[...document.querySelectorAll("div.container a")]
     let e=document.querySelector("div.container")
+    let s=document.querySelector("select#sestatus")
 
     let filter =(term)=>{
-      e.innerHTML=a.filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
+      e.innerHTML=(s.value=="seen"?a.filter(e=>e.querySelector("div.switchselec").classList.contains("active")):s.value=="unseen"?a.filter(e=>!e.querySelector("div.switchselec").classList.contains("active")):a).filter(e=>e.querySelector("div.title").innerHTML.match(RegExp(term,"i"))).map(e=>e.outerHTML).join("")
     }
     getandsearch=()=>{
       filter(document.querySelector("input.searchterm").value)
     }
     let i = document.querySelector("input.searchterm")
     i.addEventListener("keyup",getandsearch)
+    s.addEventListener("input",getandsearch)
 
     toggleStatus =(saelement)=>{
       saelement.classList.toggle("active")
