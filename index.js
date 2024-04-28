@@ -117,7 +117,7 @@ getCover = async(link) =>{
         }},
         {match:/monoschinos2\.com/i, finder:async(link)=>{
                 let rawHtml = await getHTML(link)
-                let cover = rawHtml.match(/(?<=<img class="lozad bg-secondary[\S,\s]* src=")(.*)\.jpg/g);
+                let cover = rawHtml.match(/(?<=<img class="lozad bg-secondary[\S,\s]* data-src=")(.*)\.jpg/g);
                 return (cover && cover[0])?`${cover[0]}`:""
         }}
     ]
