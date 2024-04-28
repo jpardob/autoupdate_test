@@ -7,6 +7,7 @@ const axios = require("axios")
 const fs = require("fs")
 const path = require("path")
 const express = require('express');
+const bodyParser = require('body-parser')
 const {HtmlElement} = require("./htmlElement");
 const URL = require("url").URL;
 const URLparse = require("url").parse;
@@ -116,8 +117,8 @@ getCover = async(link) =>{
         }},
         {match:/monoschinos2\.com/i, finder:async(link)=>{
                 let rawHtml = await getHTML(link)
-                let cover = rawHtml.match(/(?<=<div class="chapterpic">[\S,\s]*<img src=")(.*)\.jpg/g)[0];
-                return `${cover}`
+                let cover = rawHtml.match(/(?<=<div class="lozad bg-secondary">[\S,\s]*<img src=")(.*)\.jpg/g);
+                return (cover && cover[0])?`${cover[0]}`:""
         }}
     ]
     let strat = strategies.filter(stra=>link.match(stra.match))
@@ -136,6 +137,13 @@ app.get('/', async function(req, res) {
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links})
   res.send(page)
+});
+var jsonParser = bodyParser.json()
+//var urlencodedParser = bodyParser.urlencoded({ extended: false })
+ 
+app.post('/anime/', jsonParser, async function(req, res) {
+    console.log(req.body)
+  res.send(true)
 });
 
 const bot = new Telegraf(process.env.telegramToken)
