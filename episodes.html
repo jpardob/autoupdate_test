@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: .875rem;
+            line-height: 1.5rem;
+        }
+
+        .List-Episodes {
+            margin-bottom: 1rem;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+
+        .Episode {
+            border-bottom: 1px solid #eceff1;
+            margin-bottom: .5rem;
+        }
+
+        li {
+            list-style-type: none;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        user agent stylesheet li {
+            display: list-item;
+            text-align: -webkit-match-parent;
+            unicode-bidi: isolate;
+        }
+
+        .Episode>a,
+        .Anime>a {
+            display: block;
+            padding: 1.2rem 3rem .5rem 6.2rem;
+            position: relative;
+            min-height: 90px;
+            transition: .2s;
+            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, .03);
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .Episode .Image,
+        .Episode .Image img {
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .Episode .Image,
+        .Episode .Image img {
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .Episode .Title {
+            font-size: .875rem;
+            font-weight: 400;
+            line-height: 1.25rem;
+            margin-bottom: 5px;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .Episode p {
+            line-height: 1rem;
+            font-size: .75rem;
+            color: #00b0ff;
+            margin-bottom: 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .Episode p span {
+            font-weight: 700;
+        }
+
+        *,
+        :before,
+        :after {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            box-sizing: border-box;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .Episode p {
+            line-height: 1rem;
+            font-size: .75rem;
+            color: #00b0ff;
+            margin-bottom: 0;
+        }
+
+        .Episode .Image {
+            width: 70px;
+            height: 70px;
+            overflow: hidden;
+            left: 1rem;
+            top: .5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul class="List-Episodes">
+        
+        {{episodes}}
+
+    </ul>
+</body>
+
+</html>

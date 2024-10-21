@@ -1,4 +1,5 @@
 require("dotenv").config()
+const { Sequelize } = require('sequelize');
 const {exec} = require("child_process")
 const cluster = require("cluster")
 const { Telegraf } = require('telegraf')
@@ -20,6 +21,77 @@ const port = process.env.PORT || 80;
 
 const urlfilepath=path.join(__dirname,"links.txt")
 const jsondataname="jsondata.json"
+
+
+const sequelize = new Sequelize(
+    process.env.DB,
+    process.env.DB_USERNAME,
+    process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT
+}
+);
+
+const models={
+    anime:require('./models/anime'),
+    temp:require('./models/temp'),
+    episode:require('./models/episode')
+}
+
+getTempLink=(linkEpisode)=>{
+    return linkEpisode.replace(/\/ver\//,"/anime/").replace(/-\d+$/,"");
+}
+
+addEpisodeToDB=async({linkEpisode})=>{
+    await sequelize.authenticate();
+    const anime = await models.anime(sequelize);
+    const temp = await models.temp(sequelize);
+    const episode = await models.episode(sequelize);
+
+    let linkTemp = getTempLink(linkEpisode);
+    
+    dbtempsmatch = temp.findAll({where:{link:linkTemp}}).map(e => e.dataValues)
+
+    if(dbtempsmatch.length>0){
+        let imageLink = dbtempsmatch[0].image;
+    
+        let title = dbtempsmatch[0].name;
+
+        let idtemp=dbtempsmatch[0].id;
+    }else{
+        let imageLink = getCover(linkTemp);
+    
+        let title = getTitle(linkTemp);
+
+        let newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
+
+        await newtemp.save();
+
+        let idtemp=newtemp.dataValues.id;
+    }
+
+    let epinum = getEpisodeNumber(linkEpisode);
+
+    dbepimatch=episode.findAll({where:{link:linkEpisode}}).map(e=>e.dataValues)
+
+    if(dbepimatch.length==0){
+       let  newepi = episode.build({temp:idtemp,number:epinum,link:linkEpisode});
+
+       await newepi.save()
+    }
+
+}
+
+try {
+    (async()=>{
+        await sequelize.authenticate();
+        const anime = await models.anime(sequelize);
+        let test = anime.build({name:"test"});
+        test.save();
+    })()
+} catch (error) {
+    console.log("error "+ error)
+}
 
 render = (template,objs)=>{
     return template.replace(/\{\{\w+\}\}/g,o=>{
@@ -45,12 +117,16 @@ const notify = ()=>{
         let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
         if (episodes.length==0){
             episodes=epi
+            epi.forEach(ep=>addEpisodeToDB({linkEpisode:ep}))
         }else{
             let newepis = epi.filter(e=>!episodes.includes(e))
             if(newepis.length>0){
                 episodes=epi
                 console.log(newepis)
-                if(process.env.user)newepis.forEach(epi=>bot.telegram.sendMessage(parseInt(process.env.user),epi))
+                if(process.env.user)newepis.forEach(ep=>{
+                    bot.telegram.sendMessage(parseInt(process.env.user),ep)
+                    addEpisodeToDB({linkEpisode:ep})
+                })
             }
         }
     })
@@ -99,6 +175,44 @@ getLinks =async()=>{
   return s.join("")
 }
 
+getEpiCard=({link,imagelink,number,title})=>{
+    let listel=new HtmlElement("li");
+    listel.setClass("Episode");
+
+    let alink = new HtmlElement("a");
+    alink.href=link
+
+    let figure=new HtmlElement("figure");
+    figure.setClass("Image")
+
+    let img = new HtmlElement("img");
+    img.src=imagelink
+
+    figure.innerHtml=img
+
+    let h2 = new HtmlElement("h2");
+    h2.setClass("Title")
+    h2.innerHtml=title
+
+    let p = new HtmlElement("p");
+    let span = new HtmlElement("span");
+    span.innerHtml=number
+
+    p.innerHtml=["episodio",span]
+
+    alink.innerHtml=[figure,h2,p]
+
+    listel.innerHtml=[alink]
+
+    return listel.toString()
+}
+
+getEpisodes=()=>{
+
+}
+
+capitalize=(str)=>str.replace(/\w+/g,e=>e.toLowerCase().replace(/^\w/,f=>f.toUpperCase()))
+
 checkurl=(str)=>{
     try {
         new URL(str)
@@ -132,15 +246,38 @@ getCover = async(link) =>{
     }
 }
 
+getTitle = async(link) =>{
+    let strategies = [
+        {match:/m\.animeflv\.net/i, finder:async(link)=>{
+                let rawHtml = await getHTML(link)
+                let title = rawHtml.match(/(?<=\<h1 class="Title"\>).*(?=\<\/h1\>)/g)[0];
+                return title
+        }}
+    ]
+    let strat = strategies.filter(stra=>link.match(stra.match))
+    if(strat.length>0){
+        return strat[0].finder(link)
+    }
+}
+
+getEpisodeNumber = (link)=> parseInt(link.match(/\d+$/g)[0])
+
 //getCover("https://m.animeflv.net/anime/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito")
 
 var links = getLinks()
+var episodes = getEpisodes()
 
 // sendFile will go here
 app.get('/', async function(req, res) {
   links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links})
+  res.send(page)
+});
+app.get('/episodes', async function(req, res) {
+  links = await getLinks()
+  //res.sendFile(path.join(__dirname, '/index.html'));
+  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes})
   res.send(page)
 });
 var jsonParser = bodyParser.json()

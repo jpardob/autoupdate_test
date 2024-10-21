@@ -154,6 +154,54 @@
     }
     
 </style>
+<style>
+  div.menu{
+    position: fixed;
+    left: 0;
+    top: 0;
+    /* border: solid rgb(2, 75, 1) 0.5px; */
+  }
+  div.menu a{
+    text-decoration: none
+  }
+  div.menu div.menubtn{
+    width: 100px;
+    height: 30px;
+    line-height: 28px;
+    text-align: left;
+    font-weight: 400;
+    font-size: 14px;
+    background: #299b22;
+    /* border: solid rgb(2, 75, 1) 0.5px;
+    border-top: solid rgb(85, 254, 0) 0.5px; */
+    box-sizing: border-box;
+    user-select: none;
+    font-family: system-ui;
+    padding-left: 10px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  div.menu div.menubtn.sub:after{
+    content: ">";
+    text-align: right;
+    position:absolute;
+    right: 10px;
+    font-size: smaller;
+    font-weight: bolder;
+  }
+  div.menu div.menubtn:hover{
+    background: #44c739;
+    /* border: solid rgb(2, 75, 1) 0.5px;
+    border-bottom: solid rgb(85, 254, 0) 0.5px; */
+    overflow: visible !important;
+  }
+  div.menu div.menubtn div.menu{
+    position: absolute !important;
+    left: 100%;
+    top: 0%;
+  }
+</style>
 <script>
     var r = document.querySelector(':root')
     var rs = getComputedStyle(r);
@@ -225,6 +273,61 @@
         e.preventDefault();
       }
     })
+</script>
+<script>
+  const root = {
+    set onMenuChange(val){
+      if(typeof val == "function"){
+        this._onmenuchange=val
+      }
+    },
+    set menu(val){
+      this._menu=val
+      if(this._onmenuchange)this._onmenuchange(this._menu)
+    },
+    get menu(){
+      return this._menu
+    }
+  }
+  function createDiv(classes){
+    let div = document.createElement("div")
+    typeof classes == "string"?div.classList.add(classes):null
+    classes instanceof Array? classes.forEach(e=>typeof e == "string"?div.classList.add(e):null):null
+    return div
+  }
+  function createMenu(menu,parent=null){
+    let old=document.querySelector("div.menu")
+    if(old)old.remove()
+    let mm = createDiv("menu")
+    menu.forEach(me=>{
+      if(me.sub){
+        classes=["menubtn","sub"]
+      }else{
+        classes="menubtn"
+      }
+      let m = createDiv(classes)
+      m.innerHTML=me.title
+      if(me.sub){
+        createMenu(me.sub,m)
+      }
+      if(me.href){
+        let a = document.createElement("a")
+        a.href=me.href
+        a.append(m)
+        mm.append(a)
+      }else{
+        mm.append(m)
+      }
+     
+    })
+    if(!parent){
+      document.body.append(mm)
+    }else{
+      parent.append(mm)
+    }
+  }
+  root.onMenuChange=createMenu
+  
 </script>
 </body>
 </html>
