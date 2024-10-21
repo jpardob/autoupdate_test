@@ -59,9 +59,9 @@ addEpisodeToDB=async({linkEpisode})=>{
 
         let idtemp=dbtempsmatch[0].id;
     }else{
-        let imageLink = getCover(linkTemp);
+        let imageLink = await getCover(linkTemp);
     
-        let title = getTitle(linkTemp);
+        let title = await getTitle(linkTemp);
 
         let newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
 
