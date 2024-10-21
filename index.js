@@ -50,7 +50,7 @@ addEpisodeToDB=async({linkEpisode})=>{
 
     let linkTemp = getTempLink(linkEpisode);
     
-    dbtempsmatch = temp.findAll({where:{link:linkTemp}}).map(e => e.dataValues)
+    dbtempsmatch = (await temp.findAll({where:{link:linkTemp}})).map(e => e.dataValues)
 
     if(dbtempsmatch.length>0){
         let imageLink = dbtempsmatch[0].image;
@@ -72,7 +72,7 @@ addEpisodeToDB=async({linkEpisode})=>{
 
     let epinum = getEpisodeNumber(linkEpisode);
 
-    dbepimatch=episode.findAll({where:{link:linkEpisode}}).map(e=>e.dataValues)
+    dbepimatch=(await episode.findAll({where:{link:linkEpisode}})).map(e=>e.dataValues)
 
     if(dbepimatch.length==0){
        let  newepi = episode.build({temp:idtemp,number:epinum,link:linkEpisode});
@@ -264,20 +264,20 @@ getEpisodeNumber = (link)=> parseInt(link.match(/\d+$/g)[0])
 
 //getCover("https://m.animeflv.net/anime/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito")
 
-var links = getLinks()
-var episodes = getEpisodes()
+var links_render = getLinks()
+var episodes_render = getEpisodes()
 
 // sendFile will go here
 app.get('/', async function(req, res) {
   links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links})
+  let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links_render})
   res.send(page)
 });
 app.get('/episodes', async function(req, res) {
   links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes})
+  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes_render})
   res.send(page)
 });
 var jsonParser = bodyParser.json()
