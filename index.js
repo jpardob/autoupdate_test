@@ -113,20 +113,26 @@ const link="https://m.animeflv.net";
 var episodes = JSON.parse(process.env.currentepisodes||"[]");
 
 const notify = ()=>{
-    getHTML(link).then(e=>{
+    getHTML(link).then(async e=>{
         let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
         if (episodes && episodes.length==0){
             episodes=epi
-            epi.forEach(ep=>addEpisodeToDB({linkEpisode:ep}))
+            for(const ep of epi){
+                await addEpisodeToDB({linkEpisode:ep})
+            }
         }else{
             let newepis = epi.filter(e=>!episodes.includes(e))
             if(newepis.length>0){
                 episodes=epi
                 console.log(newepis)
-                if(process.env.user)newepis.forEach(ep=>{
-                    bot.telegram.sendMessage(parseInt(process.env.user),ep)
-                    addEpisodeToDB({linkEpisode:ep})
-                })
+                if(process.env.user){
+                    for(const ep of newepis){
+                        await addEpisodeToDB({linkEpisode:ep})
+                    }
+                    newepis.forEach(ep=>{
+                        bot.telegram.sendMessage(parseInt(process.env.user),ep)
+                    })
+                }
             }
         }
     })
