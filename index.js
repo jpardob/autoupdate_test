@@ -82,7 +82,7 @@ addEpisodeToDB=async({linkEpisode})=>{
 
 }
 
-try {
+/* try {
     (async()=>{
         await sequelize.authenticate();
         const anime = await models.anime(sequelize);
@@ -91,7 +91,7 @@ try {
     })()
 } catch (error) {
     console.log("error "+ error)
-}
+} */
 
 render = (template,objs)=>{
     return template.replace(/\{\{\w+\}\}/g,o=>{
