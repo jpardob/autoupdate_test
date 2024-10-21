@@ -115,7 +115,7 @@ var episodes = JSON.parse(process.env.currentepisodes||"[]");
 const notify = ()=>{
     getHTML(link).then(e=>{
         let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
-        if (episodes.length==0){
+        if (episodes && episodes.length==0){
             episodes=epi
             epi.forEach(ep=>addEpisodeToDB({linkEpisode:ep}))
         }else{
