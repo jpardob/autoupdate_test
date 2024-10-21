@@ -44,7 +44,7 @@ getTempLink=(linkEpisode)=>{
 
 addEpisodeToDB=async({linkEpisode})=>{
     await sequelize.authenticate();
-    const anime = await models.anime(sequelize);
+    //const anime = await models.anime(sequelize);
     const temp = await models.temp(sequelize);
     const episode = await models.episode(sequelize);
 
@@ -207,7 +207,36 @@ getEpiCard=({link,imagelink,number,title})=>{
     return listel.toString()
 }
 
-getEpisodes=()=>{
+getEpisodes=async()=>{
+    await sequelize.authenticate();
+    //const anime = await models.anime(sequelize);
+    const temp = await models.temp(sequelize);
+    const episode = await models.episode(sequelize);
+
+    let epis=(await episode.findAll()).map(e=>e.dataValues);
+
+    let temps=(await temp.findAll()).map(e=>e.dataValues);
+
+    episobjs = epis.map(ep=>{
+        tempmatch = temps.filter(tem=>temp.id==ep.temp)
+        if(tempmatch && tempmatch.length>0){
+            return {
+                link:ep.link,
+                imagelink:tempmatch[0].image,
+                number:ep.number,
+                title:tempmatch[0].name
+            }
+        }else{
+            return {
+                link:ep.link,
+                imagelink:"",
+                number:ep.number,
+                title:""
+            }
+        }
+    })
+
+    return episobjs.map(e=>getEpiCard(e)).join("")
 
 }
 
