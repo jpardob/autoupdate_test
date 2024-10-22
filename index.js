@@ -74,6 +74,8 @@ addEpisodeToDB=async({linkEpisode})=>{
     
             idtemp=newtemp.dataValues.id;
         }
+
+        imageLink=imageLink.replace(/\/cover\//,"/thumbs/")
     
         let epinum = getEpisodeNumber(linkEpisode);
     
