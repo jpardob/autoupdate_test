@@ -74,8 +74,6 @@ addEpisodeToDB=async({linkEpisode})=>{
     
             idtemp=newtemp.dataValues.id;
         }
-
-        imageLink=imageLink.replace(/\/cover\//,"/thumbs/")
     
         let epinum = getEpisodeNumber(linkEpisode);
     
@@ -202,7 +200,7 @@ getEpiCard=({link,imagelink,number,title})=>{
     figure.setClass("Image")
 
     let img = new HtmlElement("img");
-    img.src=imagelink
+    img.src=(imagelink.replace(/\/cover\//,"/thumbs/"))
 
     figure.innerHtml=[img]
 
