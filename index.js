@@ -194,7 +194,7 @@ getEpiCard=({link,imagelink,number,title})=>{
     listel.setClass("Episode");
 
     let alink = new HtmlElement("a");
-    alink.href=link
+    alink.href="/videos?epi="+link
 
     let figure=new HtmlElement("figure");
     figure.setClass("Image")
@@ -266,6 +266,35 @@ getVideolinks=async(episodeLink)=>{
     return vids
 }
 
+getVideoCard=(vid,epinum)=>{
+    let listel=new HtmlElement("li");
+    listel.setClass("Video");
+
+    let alink = new HtmlElement("a");
+    alink.href=vid.url||vid.code
+
+    let h2 = new HtmlElement("h2");
+    h2.setClass("Title")
+    h2.innerHtml=vid.title
+    let p = new HtmlElement("p");
+    let span = new HtmlElement("span");
+    span.innerHtml=epinum
+
+    p.innerHtml=["episodio",span]
+
+    alink.innerHtml=[h2,p]
+
+    listel.innerHtml=[alink]
+
+    return listel.toString()
+}
+
+getVideoOptions=async(epilink)=>{
+    let vids = await getVideolinks(epilink);
+    let epinum = getEpisodeNumber(epilink)
+    return vids.SUB.map(vid=>getVideoCard(vid,epinum)).join("")
+}
+
 capitalize=(str)=>str.replace(/\w+/g,e=>e.toLowerCase().replace(/^\w/,f=>f.toUpperCase()))
 
 checkurl=(str)=>{
@@ -331,6 +360,16 @@ app.get('/episodes', async function(req, res) {
   episodes_render = await getEpisodes()
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
+  res.send(page)
+});
+app.get('/videos', async function(req, res) {
+    let epilink = req.query.epi
+    let videoOptions=""
+    if(checkurl(epilink)){
+        videoOptions = await getVideoOptions(epilink)
+    }
+  //res.sendFile(path.join(__dirname, '/index.html'));
+  let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions})
   res.send(page)
 });
 var jsonParser = bodyParser.json()
