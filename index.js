@@ -202,7 +202,7 @@ getEpiCard=({link,imagelink,number,title})=>{
     let img = new HtmlElement("img");
     img.src=imagelink
 
-    figure.innerHtml=img
+    figure.innerHtml=[img]
 
     let h2 = new HtmlElement("h2");
     h2.setClass("Title")
@@ -232,7 +232,7 @@ getEpisodes=async()=>{
     let temps=(await temp.findAll()).map(e=>e.dataValues);
 
     episobjs = epis.map(ep=>{
-        tempmatch = temps.filter(tem=>temp.id==ep.temp)
+        tempmatch = temps.filter(tem=>tem.id==ep.temp)
         if(tempmatch && tempmatch.length>0){
             return {
                 link:ep.link,
