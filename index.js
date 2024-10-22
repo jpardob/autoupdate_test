@@ -46,29 +46,33 @@ addEpisodeToDB=async({linkEpisode})=>{
     try {
         await sequelize.authenticate();
         //const anime = await models.anime(sequelize);
-        const temp = await models.temp(sequelize);
+        const temporada = await models.temp(sequelize);
         const episode = await models.episode(sequelize);
     
         let linkTemp = getTempLink(linkEpisode);
         
-        dbtempsmatch = (await temp.findAll({where:{link:linkTemp}})).map(e => e.dataValues)
+        dbtempsmatch = (await temporada.findAll({where:{link:linkTemp}})).map(e => e.dataValues)
+
+        let imageLink
+        let title
+        let idtemp
     
         if(dbtempsmatch.length>0){
-            let imageLink = dbtempsmatch[0].image;
+            imageLink = dbtempsmatch[0].image;
         
-            let title = dbtempsmatch[0].name;
+            title = dbtempsmatch[0].name;
     
-            let idtemp=dbtempsmatch[0].id;
+            idtemp=dbtempsmatch[0].id;
         }else{
-            let imageLink = await getCover(linkTemp);
+            imageLink = await getCover(linkTemp);
         
-            let title = await getTitle(linkTemp);
+            title = await getTitle(linkTemp);
     
-            let newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
+            newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
     
             await newtemp.save();
     
-            let idtemp=newtemp.dataValues.id;
+            idtemp=newtemp.dataValues.id;
         }
     
         let epinum = getEpisodeNumber(linkEpisode);
