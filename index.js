@@ -68,7 +68,7 @@ addEpisodeToDB=async({linkEpisode})=>{
         
             title = await getTitle(linkTemp);
     
-            newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
+            newtemp = temporada.build({name:title,image:imageLink,link:linkTemp})
     
             await newtemp.save();
     
@@ -314,13 +314,13 @@ var episodes_render = getEpisodes()
 app.get('/', async function(req, res) {
   links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links_render})
+  let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links:links_render})
   res.send(page)
 });
 app.get('/episodes', async function(req, res) {
   links = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes_render})
+  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
   res.send(page)
 });
 var jsonParser = bodyParser.json()
