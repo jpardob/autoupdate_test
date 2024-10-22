@@ -43,43 +43,47 @@ getTempLink=(linkEpisode)=>{
 }
 
 addEpisodeToDB=async({linkEpisode})=>{
-    await sequelize.authenticate();
-    //const anime = await models.anime(sequelize);
-    const temp = await models.temp(sequelize);
-    const episode = await models.episode(sequelize);
-
-    let linkTemp = getTempLink(linkEpisode);
+    try {
+        await sequelize.authenticate();
+        //const anime = await models.anime(sequelize);
+        const temp = await models.temp(sequelize);
+        const episode = await models.episode(sequelize);
     
-    dbtempsmatch = (await temp.findAll({where:{link:linkTemp}})).map(e => e.dataValues)
-
-    if(dbtempsmatch.length>0){
-        let imageLink = dbtempsmatch[0].image;
+        let linkTemp = getTempLink(linkEpisode);
+        
+        dbtempsmatch = (await temp.findAll({where:{link:linkTemp}})).map(e => e.dataValues)
     
-        let title = dbtempsmatch[0].name;
-
-        let idtemp=dbtempsmatch[0].id;
-    }else{
-        let imageLink = await getCover(linkTemp);
+        if(dbtempsmatch.length>0){
+            let imageLink = dbtempsmatch[0].image;
+        
+            let title = dbtempsmatch[0].name;
     
-        let title = await getTitle(linkTemp);
-
-        let newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
-
-        await newtemp.save();
-
-        let idtemp=newtemp.dataValues.id;
+            let idtemp=dbtempsmatch[0].id;
+        }else{
+            let imageLink = await getCover(linkTemp);
+        
+            let title = await getTitle(linkTemp);
+    
+            let newtemp = temp.build({name:title,image:imageLink,link:linkTemp})
+    
+            await newtemp.save();
+    
+            let idtemp=newtemp.dataValues.id;
+        }
+    
+        let epinum = getEpisodeNumber(linkEpisode);
+    
+        dbepimatch=(await episode.findAll({where:{link:linkEpisode}})).map(e=>e.dataValues)
+    
+        if(dbepimatch.length==0){
+           let  newepi = episode.build({temp:idtemp,number:epinum,link:linkEpisode});
+    
+           await newepi.save()
+        }
+        
+    } catch (error) {
+        console.log(error)
     }
-
-    let epinum = getEpisodeNumber(linkEpisode);
-
-    dbepimatch=(await episode.findAll({where:{link:linkEpisode}})).map(e=>e.dataValues)
-
-    if(dbepimatch.length==0){
-       let  newepi = episode.build({temp:idtemp,number:epinum,link:linkEpisode});
-
-       await newepi.save()
-    }
-
 }
 
 /* try {
