@@ -200,7 +200,7 @@ getEpiCard=({link,imagelink,number,title})=>{
     figure.setClass("Image")
 
     let img = new HtmlElement("img");
-    img.src=(imagelink.replace(/\/cover\//,"/thumbs/"))
+    img.src=(imagelink.replace(/\/covers\//,"/thumbs/"))
 
     figure.innerHtml=[img]
 
