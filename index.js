@@ -270,7 +270,7 @@ getCover = async(link) =>{
         {match:/m\.animeflv\.net/i, finder:async(link)=>{
                 let rawHtml = await getHTML(link)
                 let cover = rawHtml.match(/\/uploads\/animes\/covers\/\w+\.jpg/)[0];
-                return `https://m.animeflv.net/${cover}`
+                return `https://m.animeflv.net${cover}`
         }},
         {match:/monoschinos2\.com/i, finder:async(link)=>{
                 let rawHtml = await getHTML(link)
