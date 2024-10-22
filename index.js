@@ -125,7 +125,7 @@ const notify = ()=>{
         let epi = e.match(/<a href="\/ver\/.*>/g).map(e=>link+e.match(/".*"/g)[0].replace(/"/g,""))
         if (episodes && episodes.length==0){
             episodes=epi
-            for(const ep of epi){
+            for(const ep of epi.reverse()){
                 await addEpisodeToDB({linkEpisode:ep})
             }
         }else{
@@ -134,7 +134,7 @@ const notify = ()=>{
                 episodes=epi
                 console.log(newepis)
                 if(process.env.user){
-                    for(const ep of newepis){
+                    for(const ep of newepis.reverse()){
                         await addEpisodeToDB({linkEpisode:ep})
                     }
                     newepis.forEach(ep=>{
@@ -250,8 +250,20 @@ getEpisodes=async()=>{
         }
     })
 
-    return episobjs.map(e=>getEpiCard(e)).join("")
+    return episobjs.reverse().map(e=>getEpiCard(e)).join("")
 
+}
+
+getVideolinks=async(episodeLink)=>{
+    let rawHtml = await getHTML(episodeLink);
+    let jsonvids= rawHtml.match(/(?<=var videos = ){.*}(?=;)/)[0]
+    let vids = false
+    try {
+        vids = JSON.parse(jsonvids)
+    } catch (error) {
+        console.log("cant parse json:  "+jsonvids)    
+    }
+    return vids
 }
 
 capitalize=(str)=>str.replace(/\w+/g,e=>e.toLowerCase().replace(/^\w/,f=>f.toUpperCase()))
