@@ -307,18 +307,16 @@ getEpisodeNumber = (link)=> parseInt(link.match(/\d+$/g)[0])
 
 //getCover("https://m.animeflv.net/anime/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito")
 
-var links_render = getLinks()
-var episodes_render = getEpisodes()
 
 // sendFile will go here
 app.get('/', async function(req, res) {
-  links = await getLinks()
+  links_render = await getLinks()
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"index.html"),{encoding:"utf-8"}),{test:"elemento de prueba",links:links_render})
   res.send(page)
 });
 app.get('/episodes', async function(req, res) {
-  links = await getLinks()
+  episodes_render = await getEpisodes()
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
   res.send(page)
