@@ -271,7 +271,7 @@ getVideoCard=(vid,epinum)=>{
     listel.setClass("Video");
 
     let alink = new HtmlElement("a");
-    alink.href=vid.url||vid.code
+    alink.href=vid.code
 
     let h2 = new HtmlElement("h2");
     h2.setClass("Title")
