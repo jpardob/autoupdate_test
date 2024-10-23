@@ -365,11 +365,12 @@ app.get('/episodes', async function(req, res) {
 app.get('/videos', async function(req, res) {
     let epilink = req.query.epi
     let videoOptions=""
+    let title = await getTitle(getTempLink(epilink))
     if(checkurl(epilink)){
         videoOptions = await getVideoOptions(epilink)
     }
   //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions})
+  let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions,title})
   res.send(page)
 });
 var jsonParser = bodyParser.json()
