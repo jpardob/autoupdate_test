@@ -22,6 +22,8 @@ const port = process.env.PORT || 80;
 const urlfilepath=path.join(__dirname,"links.txt")
 const jsondataname="jsondata.json"
 
+const { Op } = require("sequelize")
+
 
 const sequelize = new Sequelize(
     process.env.DB,
@@ -221,13 +223,21 @@ getEpiCard=({link,imagelink,number,title})=>{
     return listel.toString()
 }
 
-getEpisodes=async()=>{
+getEpisodes=async(mindate, maxdate)=>{
     await sequelize.authenticate();
     //const anime = await models.anime(sequelize);
     const temp = await models.temp(sequelize);
     const episode = await models.episode(sequelize);
 
-    let epis=(await episode.findAll()).map(e=>e.dataValues);
+    let epis
+
+    if(mindate && maxdate){
+        epis=(await episode.findAll({where:{created_at:{[Op.between]:[mindate,maxdate]}}})).map(e=>e.dataValues);
+    }else if(mindate){
+        epis=(await episode.findAll({where:{created_at:{[Op.gte]:mindate}}})).map(e=>e.dataValues);
+    }else {
+        epis=(await episode.findAll()).map(e=>e.dataValues);
+    }
 
     let temps=(await temp.findAll()).map(e=>e.dataValues);
 
@@ -346,6 +356,12 @@ getTitle = async(link) =>{
 
 getEpisodeNumber = (link)=> parseInt(link.match(/\d+$/g)[0])
 
+getDateAWeekAgo=()=>{
+    var date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date.getFullYear()+"-"+(("0"+(date.getMonth()+1)).slice(-2))+"-"+date.getDate();
+}
+
 //getCover("https://m.animeflv.net/anime/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito")
 
 
@@ -357,10 +373,17 @@ app.get('/', async function(req, res) {
   res.send(page)
 });
 app.get('/episodes', async function(req, res) {
-  episodes_render = await getEpisodes()
-  //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
-  res.send(page)
+    let mindate = req.query.min?req.query.min.match(/^\d{4}-\d{2}-\d{2}$/g):null
+    let maxdate = req.query.max?req.query.max.match(/^\d{4}-\d{2}-\d{2}$/g):null
+    episodes_render = await getEpisodes(mindate?mindate[0]:getDateAWeekAgo(),maxdate?maxdate[0]:null)
+    //res.sendFile(path.join(__dirname, '/index.html'));
+    let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
+    res.send(page)
+});
+app.get('/episodes/all', async function(req, res) {
+    episodes_render = await getEpisodes();
+    let page= render(fs.readFileSync(path.join(__dirname,"episodes.html"),{encoding:"utf-8"}),{test:"elemento de prueba",episodes:episodes_render})
+    res.send(page)
 });
 app.get('/videos', async function(req, res) {
     let epilink = req.query.epi
