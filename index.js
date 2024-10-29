@@ -148,6 +148,10 @@ const notify = ()=>{
     })
 }
 
+const getPublicIp=()=>{
+    getHTML("https://www.ippublica.net/").then(async e=>{console.log(e)})
+}
+
 //////////end specific web code//////////
 
 let crc32 =(r)=>{for(var a,o=[],c=0;c<256;c++){a=c;for(var f=0;f<8;f++)a=1&a?3988292384^a>>>1:a>>>1;o[c]=a}for(var n=-1,t=0;t<r.length;t++)n=n>>>8^o[255&(n^r.charCodeAt(t))];return(-1^n)>>>0};
@@ -494,6 +498,10 @@ if(cluster.isWorker){
     })
     bot.hears(/givemecontext/i,(ctx)=>{
             ctx.reply(JSON.stringify(ctx.chat))
+    })
+    bot.hears(/givemethelink/i,async(ctx)=>{
+        let ip = await getPublicIp()
+            ctx.reply(ip)
     })
     /////////specific code////////
     cron.schedule('*/5 * * * *', () => {
