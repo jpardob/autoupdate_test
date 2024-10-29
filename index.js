@@ -149,7 +149,7 @@ const notify = ()=>{
 }
 
 const getPublicIp=async()=>{
-    return await getHTML("http://ifconfig.me")
+    return await getHTML("https://ifconfig.me")
 }
 ///getPublicIp()
 //////////end specific web code//////////
