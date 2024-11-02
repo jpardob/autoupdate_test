@@ -195,9 +195,13 @@ getLinks =async()=>{
   return s.join("")
 }
 
-getEpiCard=({link,imagelink,number,title})=>{
+getEpiCard=({link,imagelink,number,title,view})=>{
     let listel=new HtmlElement("li");
-    listel.setClass("Episode");
+    if (view){
+        listel.setClass("Episode","visto");
+    } else {
+        listel.setClass("Episode");
+    }
 
     let alink = new HtmlElement("a");
     alink.href="/videos?epi="+link
@@ -252,14 +256,16 @@ getEpisodes=async(mindate, maxdate)=>{
                 link:ep.link,
                 imagelink:tempmatch[0].image,
                 number:ep.number,
-                title:tempmatch[0].name
+                title:tempmatch[0].name,
+                view:ep.view
             }
         }else{
             return {
                 link:ep.link,
                 imagelink:"",
                 number:ep.number,
-                title:""
+                title:"",
+                view:false
             }
         }
     })
@@ -307,6 +313,14 @@ getVideoOptions=async(epilink)=>{
     let vids = await getVideolinks(epilink);
     let epinum = getEpisodeNumber(epilink)
     return vids.SUB.map(vid=>getVideoCard(vid,epinum)).join("")
+}
+
+toggleViewStatus=async(epilink)=>{
+    await sequelize.authenticate();
+    const episode = await models.episode(sequelize);
+    let episodeObj = await episode.findAll({where:{link:epilink}});
+    episodeObj.view=!episodeObj.view;
+    await episodeObj.save();
 }
 
 capitalize=(str)=>str.replace(/\w+/g,e=>e.toLowerCase().replace(/^\w/,f=>f.toUpperCase()))
@@ -395,6 +409,11 @@ app.get('/videos', async function(req, res) {
     let title = await getTitle(getTempLink(epilink))
     if(checkurl(epilink)){
         videoOptions = await getVideoOptions(epilink)
+    }
+app.get('/markasview', async function(req, res) {
+    let epilink = req.query.epi
+    if(checkurl(epilink)){
+        await toggleViewStatus(epilink)
     }
   //res.sendFile(path.join(__dirname, '/index.html'));
   let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions,title})
