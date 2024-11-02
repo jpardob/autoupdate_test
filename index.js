@@ -318,7 +318,7 @@ getVideoOptions=async(epilink)=>{
 toggleViewStatus=async(epilink)=>{
     await sequelize.authenticate();
     const episode = await models.episode(sequelize);
-    let episodeObj = await episode.findAll({where:{link:epilink}});
+    let episodeObj = (await episode.findAll({where:{link:epilink}}))[0];
     episodeObj.view=!episodeObj.view;
     await episodeObj.save();
 }
@@ -409,14 +409,18 @@ app.get('/videos', async function(req, res) {
     let title = await getTitle(getTempLink(epilink))
     if(checkurl(epilink)){
         videoOptions = await getVideoOptions(epilink)
-    }
+    };
+      //res.sendFile(path.join(__dirname, '/index.html'));
+    let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions,title})
+    res.send(page);
+});
 app.get('/markasview', async function(req, res) {
     let epilink = req.query.epi
     if(checkurl(epilink)){
         await toggleViewStatus(epilink)
     }
   //res.sendFile(path.join(__dirname, '/index.html'))
-  res.redirect('/episodes/all')
+  res.redirect('/episodes/all');
 });
 var jsonParser = bodyParser.json()
 //var urlencodedParser = bodyParser.urlencoded({ extended: false })
