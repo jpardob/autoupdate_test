@@ -415,9 +415,8 @@ app.get('/markasview', async function(req, res) {
     if(checkurl(epilink)){
         await toggleViewStatus(epilink)
     }
-  //res.sendFile(path.join(__dirname, '/index.html'));
-  let page= render(fs.readFileSync(path.join(__dirname,"videos.html"),{encoding:"utf-8"}),{originallink:epilink,videos:videoOptions,title})
-  res.send(page)
+  //res.sendFile(path.join(__dirname, '/index.html'))
+  res.redirect('/episodes/all')
 });
 var jsonParser = bodyParser.json()
 //var urlencodedParser = bodyParser.urlencoded({ extended: false })
