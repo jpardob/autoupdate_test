@@ -22,7 +22,10 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        padding: var(--margintb) var(--marginlr);
+        padding-left: var(--marginlr);
+        padding-top: var(--margintb);
+        padding-right: var(--marginlr);
+        padding-bottom: var(--margintb);
     }
     .digit{
         width: var(--digitwidth);
@@ -152,17 +155,15 @@
             let digitspace = parseFloat(document.documentElement.style.getPropertyValue("--digspace").replace("px",""))
 
             if(digitwidth * 2 > h){
-
                 document.documentElement.style.setProperty('--digitwidth', (h/2)+'px')
                 document.documentElement.style.setProperty('--digspace', '10px')
-
                 document.documentElement.style.setProperty('--margintb', '0px')
                 document.documentElement.style.setProperty('--marginlr', ((w-(((digitspace*2)+digitwidth)*numofdigs))/2)+'px')
 
             }else{
                 document.documentElement.style.setProperty('--digitwidth', nw+'px')
                 document.documentElement.style.setProperty('--digspace', '10px')
-                document.documentElement.style.setProperty('--margintb', ((h/2)-digitwidth)+'px')
+                document.documentElement.style.setProperty('--margintb', ((h/2)-nw)+'px')
                 document.documentElement.style.setProperty('--marginlr', '0px')
             }
 
