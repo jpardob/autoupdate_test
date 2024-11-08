@@ -115,7 +115,7 @@
 
     </div>
     <script>
-        var numofdigs = 5;
+        var numofdigs = 2;
         var screen=document.querySelector("div.screen")
         createdigit = ()=>{
             let digit = document.createElement("div")
@@ -186,11 +186,18 @@
 
         window.onresize=setStyle
 
+        digLen=(num)=>{
+            return String(num).split(/\B/).length
+        }
 
         var num =0
         window.onclick=e=>{
-
             num++;
+            let dl=digLen(num)
+            if(dl>numofdigs){
+                numofdigs=dl
+                createScreen();
+            }
             writeNum(num)
         }
 
