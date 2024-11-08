@@ -215,17 +215,17 @@
         }
 
         var objdata={
-            setNum(val){
+            set num(val){
                 this._num=val;
                 writeNum(val)
             },
-            getNum(){
+            get num(){
                 return(this._num)
             }
         }
 
         window.onclick=e=>{
-            let num = objdata.num;
+            let num = objdata.num||0;
             num++
             let dl=digLen(num)
             if(dl>numofdigs){
