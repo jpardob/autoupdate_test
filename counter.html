@@ -119,6 +119,16 @@
         var numofdigs = 2;
         var screen=document.querySelector("div.screen")
         var digitspace = parseFloat(document.documentElement.style.getPropertyValue("--digspace").replace("px",""))
+        var objdata={
+            setNum(val){
+                this._num=val;
+                writeNum(val)
+            },
+            getNum(){
+                return(this._num)
+            }
+        }
+
         createdigit = ()=>{
             let digit = document.createElement("div")
             digit.classList.add("digit")
@@ -213,15 +223,15 @@
             return String(num).split(/\B/).length
         }
 
-        var num =0
         window.onclick=e=>{
-            num++;
+            let num = objdata.num;
+            num++
             let dl=digLen(num)
             if(dl>numofdigs){
                 numofdigs=dl
                 createScreen();
             }
-            writeNum(num)
+            objdata.num++
         }
 
     </script>
