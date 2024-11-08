@@ -422,6 +422,12 @@ app.get('/markasview', async function(req, res) {
   //res.sendFile(path.join(__dirname, '/index.html'))
   res.redirect('/episodes/all');
 });
+
+app.get('/counter', async function(req, res) {
+    let page= render(fs.readFileSync(path.join(__dirname,"counter.html"),{encoding:"utf-8"}),{})
+    res.send(page)
+});
+
 var jsonParser = bodyParser.json()
 //var urlencodedParser = bodyParser.urlencoded({ extended: false })
  

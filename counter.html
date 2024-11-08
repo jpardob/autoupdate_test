@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>counter</title>
+</head>
+<style>
+    :root{
+        --digitwidth:100px;
+        --segmentwidth:20%;
+        --deactivate:rgb(117, 117, 117);
+        --marginlr:0px;
+        --margintb:100px;
+        --digspace:10px
+    }
+    body{
+        margin: 0;
+        padding: 0;
+    }
+    .screen{
+        position: absolute;
+        margin: var(--margintb) var(--marginlr);
+    }
+    .digit{
+        width: var(--digitwidth);
+        height: calc(var(--digitwidth) * 2);
+        background-color: grey;
+        position: relative;
+        float: left;
+        margin: 0 var(--digspace);
+    }
+    .segment{
+        height: var(--digitwidth);
+        width: var(--segmentwidth);
+        position: absolute;
+        background-color: black;
+        clip-path: polygon(0% var(--segmentwidth), 50% calc(var(--segmentwidth) / 2), 100% var(--segmentwidth), 100% calc(100% - var(--segmentwidth)), 50% calc(100% - (var(--segmentwidth) / 2)), 0 calc(100% - var(--segmentwidth)));
+        --fixtrans:calc( (var(--digitwidth) - var(--segmentwidth)) / 2);
+        --fixtrans1:calc((var(--digitwidth) - (var(--segmentwidth) / 2)) / -2);
+        --fixtrans2:calc(((var(--digitwidth) - (var(--segmentwidth) / 2)) / -2) + var(--digitwidth) - (var(--segmentwidth) / 4));
+    }
+    .segment.suu,
+    .segment.sm,
+    .segment.sdd{
+        transform: rotate(90deg);
+    }
+    .segment.suu{
+        top:var(--fixtrans1);
+        left:var(--fixtrans)
+    }
+    .segment.sul{
+        left: 0;
+        top: calc(var(--segmentwidth) / 8);
+    }
+    .segment.sur{
+        right: 0;
+        top: calc(var(--segmentwidth) / 8);
+    }
+    .segment.sm{
+        top:var(--fixtrans2);
+        left:var(--fixtrans)
+    }
+    .segment.sdl{
+        bottom: calc(var(--segmentwidth) / 8);
+        left: 0;
+    }
+    .segment.sdr{
+        bottom: calc(var(--segmentwidth) / 8);
+        right: 0;
+    }
+    .segment.sdd{
+        bottom:var(--fixtrans1);
+        left:var(--fixtrans)
+    }
+
+    .digit.n0>.sm{
+        background-color: var(--deactivate);
+    }
+    .digit.n1>.sm,.digit.n1>.suu,.digit.n1>.sdd,.digit.n1>.sul,.digit.n1>.sdl{
+        background-color: var(--deactivate);
+    }
+    .digit.n2>.sul,.digit.n2>.sdr{
+        background-color: var(--deactivate);
+    }
+    .digit.n3>.sul,.digit.n3>.sdl{
+        background-color: var(--deactivate);
+    }
+    .digit.n4>.suu,.digit.n4>.sdd,.digit.n4>.sdl{
+        background-color: var(--deactivate);
+    }
+    .digit.n5>.sur,.digit.n5>.sdl{
+        background-color: var(--deactivate);
+    }
+    .digit.n6>.sur{
+        background-color: var(--deactivate);
+    }
+    .digit.n7>.sm,.digit.n7>.sdl,.digit.n7>.sdd,.digit.n7>.sul{
+        background-color: var(--deactivate);
+    }
+    .digit.n9>.sdl{
+        background-color: var(--deactivate);
+    }
+    .digit.off>.segment{
+        background-color: var(--deactivate);
+    }
+
+
+</style>
+<body>
+    <div class="container">
+        <div class="screen">
+            
+        </div>
+
+    </div>
+    <script>
+        var numofdigs = 5;
+        var screen=document.querySelector("div.screen")
+        createdigit = ()=>{
+            let digit = document.createElement("div")
+            digit.classList.add("digit")
+            digit.classList.add("off")
+            let g=["suu","sul","sur","sm","sdl","sdr","sdd"]
+            g.map(c=>{
+                let s = document.createElement("div")
+                s.classList.add("segment")
+                s.classList.add(c)
+                digit.append(s)
+            })
+            screen.append(digit)
+        }
+
+        createScreen=()=>{
+            [...Array(numofdigs)].forEach(e=>{
+                createdigit()
+            })
+            updateD()
+        }
+
+        setStyle = () =>{
+            let h = window.innerHeight
+            let w = window.innerWidth
+
+            let nw = (w/numofdigs)-20
+
+            document.documentElement.style.setProperty('--digitwidth', nw+'px')
+            document.documentElement.style.setProperty('--digspace', '10px')
+        }
+
+        var d=[...document.querySelectorAll(".digit")].reverse();
+
+        updateD = () =>{
+            d=[...document.querySelectorAll(".digit")].reverse();
+        }
+        
+        setDigit=(dig,disp)=>{
+            if(dig){     
+                disp.classList.remove("off")
+                let m = dig.match(/^\d$/g);
+                if(m && parseInt(m[0])>=0 && parseInt(m[0])<=9){
+                    let mc=disp.className.match(/ n\d/g)
+                    if(mc){
+                        disp.className=disp.className.replace(/ n\d/g,e=>e.replace(/\d/,dig))
+                    }else{
+                        disp.classList.add("n"+dig)
+                    }
+                }else{
+                    disp.classList.add("off")
+                }
+            }else{
+                disp.classList.add("off")
+            }
+        }
+
+        writeNum=(num)=>{
+            let a = String(num).split(/\B/).reverse();
+            d.forEach((e,i)=>{
+                setDigit(a[i],e)
+            })
+        }
+
+        createScreen();
+
+        setStyle();
+
+        window.onresize=setStyle
+
+
+        var num =0
+        window.onclick=e=>{
+
+            num++;
+            writeNum(num)
+        }
+
+    </script>
+</body>
+</html>
