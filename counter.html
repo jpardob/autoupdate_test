@@ -116,6 +116,7 @@
     <script>
         var numofdigs = 2;
         var screen=document.querySelector("div.screen")
+        var digitspace = parseFloat(document.documentElement.style.getPropertyValue("--digspace").replace("px",""))
         createdigit = ()=>{
             let digit = document.createElement("div")
             digit.classList.add("digit")
@@ -146,7 +147,7 @@
             let nw = (w/numofdigs)-20
 
             let digitwidth = parseFloat(document.documentElement.style.getPropertyValue("--digitwidth").replace("px",""))
-            let digitspace = parseFloat(document.documentElement.style.getPropertyValue("--digspace").replace("px",""))
+            
 
             if(digitwidth * 2 > h){
                 document.documentElement.style.setProperty('--digitwidth', (h/2)+'px')
