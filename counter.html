@@ -136,7 +136,8 @@
             [...Array(numofdigs)].forEach(e=>{
                 createdigit()
             })
-            updateD()
+            updateD();
+            setStyle();
         }
 
         setStyle = () =>{
@@ -182,8 +183,6 @@
         }
 
         createScreen();
-
-        setStyle();
 
         window.onresize=setStyle
 
