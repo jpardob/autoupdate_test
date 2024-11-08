@@ -217,6 +217,11 @@
         var objdata={
             set num(val){
                 this._num=val;
+                let dl=digLen(num)
+                if(dl>numofdigs){
+                    numofdigs=dl
+                    createScreen();
+                }
                 writeNum(val)
             },
             get num(){
@@ -227,11 +232,6 @@
         window.onclick=e=>{
             let num = objdata.num||0;
             num++
-            let dl=digLen(num)
-            if(dl>numofdigs){
-                numofdigs=dl
-                createScreen();
-            }
             objdata.num=num
         }
 
