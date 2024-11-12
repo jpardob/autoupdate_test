@@ -457,13 +457,11 @@ appendToFile=(filepath,dat)=>{
 
 formatJson = (json) =>{
     let count=0;
-
-    return JSON.stringify(json).replace(/{},|{}|{|}|"(\\"|[^"])*"(:|,)?/g,e=>{
-    if(e=="}")count--; 
+    return JSON.stringify(json).replace(/{},|\[\]|{}|\[|\]|{|(}|true|false|"(\\"|[^"])*")(:|,)?|}/g,e=>{
+    if(e=="}" || e=="]" || e=="}," )count--; 
     let pad = [...Array(count).keys()].map(e=>"   ").join("")
-    if(e=="{")count++; 
-    return pad+e+"\n"}).replace(/(?<=:)\n\s*(?=({|"(\\"|[^"])*"|(\d+)))/g," ")
-
+    if(e=="{" || e=="[")count++; 
+    return pad+e+"\n"}).replace(/(?<=:)\n\s*(?=({|\[|false|true|"(\\"|[^"])*"|(\d+)))/g," ")
 }
 
 parseHeadAttrib=(str,attr)=>{
