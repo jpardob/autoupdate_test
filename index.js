@@ -15,6 +15,7 @@ const URLparse = require("url").parse;
 const https = require("https")
 const {getHTML} = require("./web.js")
 var cron = require('node-cron');
+const QRCode = require('qrcode')
 
 const app = express();
 
@@ -426,6 +427,21 @@ app.get('/markasview', async function(req, res) {
   //res.sendFile(path.join(__dirname, '/index.html'))
   res.redirect('/episodes/all');
 });
+
+
+
+app.get('/genQR', async function(req,res){
+    let data = req.query.data||"no data";
+    try{
+        const qrcode = await QRCode.toDataURL(data);
+        res.setHeader("Content-Type","image/png");
+        const base64data= qrcode.replace(/^data:image\/png;base64,/,"")
+        const imagebuff = Buffer.from(base64data,"base64");
+        res.send(imagebuff);
+    }catch{
+        res.status(500).send("error")
+    }
+})
 
 app.get('/counter', async function(req, res) {
     let page= render(fs.readFileSync(path.join(__dirname,"counter.html"),{encoding:"utf-8"}),{})
