@@ -17,6 +17,10 @@ const {getHTML} = require("./web.js")
 var cron = require('node-cron');
 
 const app = express();
+
+createDir(__dirname,"public")
+app.use(express.static(path.join(__dirname,'public')))
+
 const port = process.env.PORT || 80;
 
 const urlfilepath=path.join(__dirname,"links.txt")
