@@ -19,9 +19,6 @@ const QRCode = require('qrcode')
 
 const app = express();
 
-createDir(__dirname,"public")
-app.use(express.static(path.join(__dirname,'public')))
-
 const port = process.env.PORT || 80;
 
 const urlfilepath=path.join(__dirname,"links.txt")
@@ -490,6 +487,9 @@ parseHeadAttrib=(str,attr)=>{
     let attrM = info.filter(l=>l.match(reg))
     return attrM && attrM.length>0 ?attrM[0].replace(reg,"").trim():"no set";
 }
+
+createDir(__dirname,"public")
+app.use(express.static(path.join(__dirname,'public')))
 
 if(cluster.isWorker){
     bot.hears(/versi(o|ó)n/i,(ctx)=>{
