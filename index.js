@@ -488,7 +488,7 @@ parseHeadAttrib=(str,attr)=>{
     return attrM && attrM.length>0 ?attrM[0].replace(reg,"").trim():"no set";
 }
 
-createDir(__dirname,"public")
+createDir(path.join(__dirname,"public"))
 app.use(express.static(path.join(__dirname,'public')))
 
 if(cluster.isWorker){
