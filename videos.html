@@ -73,6 +73,9 @@ p {
     color: #00b0ff;
     margin-bottom: 0;
 }
+p,h2{
+    pointer-events: none;
+}
   </style>
 </head>
 <body>
@@ -93,5 +96,14 @@ p {
             </a>
         </li>
 </ul>
+<script>
+    document.body.addEventListener("contextmenu",e=>{
+    if(e.target.tagName =="A"){
+        window.location.href="/genQR?data="+e.target.href
+        e.preventDefault()
+    }
+    
+})
+</script>
 </body>
 </html>
