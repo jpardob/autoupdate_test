@@ -425,8 +425,6 @@ app.get('/markasview', async function(req, res) {
   res.redirect('/episodes/all');
 });
 
-
-
 app.get('/genQR', async function(req,res){
     let data = req.query.data||"no data";
     try{
@@ -438,6 +436,11 @@ app.get('/genQR', async function(req,res){
     }catch{
         res.status(500).send("error")
     }
+})
+
+app.get('/scan', async function(req,res){
+    let page= render(fs.readFileSync(path.join(__dirname,"scan.html"),{encoding:"utf-8"}),{})
+    res.send(page);
 })
 
 app.get('/counter', async function(req, res) {
