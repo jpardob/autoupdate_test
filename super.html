@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Supermercado</title>
+  <style>
+    /* Estilos generales */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f7f7f7;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      color: #4CAF50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .item-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .item-form input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .item-form button {
+      padding: 10px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .item-form button:hover {
+      background-color: #45a049;
+    }
+
+    .list {
+      list-style: none;
+    }
+
+    .list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #e7f5e8;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    .list li .delete-btn {
+      color: #ff4444;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .list li .delete-btn:hover {
+      color: #ff0000;
+    }
+
+    /* Responsividad */
+    @media (max-width: 400px) {
+      .item-form input[type="text"] {
+        font-size: 0.9em;
+      }
+
+      .item-form button {
+        font-size: 0.9em;
+      }
+
+      .list li {
+        font-size: 0.9em;
+      }
+   
+    }
+    .checked span{
+    	text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Lista de Supermercado</h1>
+    <div class="item-form">
+      <input type="text" placeholder="Agregar ítem..." />
+      <button onclick="add()">Agregar</button>
+    </div>
+    <ul class="list">
+      <li>
+        <span>Leche</span>
+        <div>
+            <span class="delete-btn">&#10003;</span>
+            <span class="delete-btn">&times;</span>
+        </div>
+        
+      </li>
+      <li>
+        <span>Huevos</span>
+        <span class="delete-btn">&times;</span>
+      </li>
+      <li>
+        <span>Pan</span>
+        <span class="delete-btn">&times;</span>
+      </li>
+    </ul>
+  </div>
+  <script>
+  createli=(obj)=>{
+      let li = document.createElement("li")
+      let span = document.createElement("span")
+      let span2 = document.createElement("span")
+      span2.classList.add("delete-btn")
+      span2.innerHTML="&times;"
+      span.innerHTML=obj.name
+      span2.onclick=()=>{deleteElement(obj.name)}
+      li.append(span)
+      li.append(span2)
+      return li
+    }
+    function add(){
+      let name = document.querySelector("input").value
+      document.querySelector("input").value=""
+      fetch("/super", {
+              method: "POST",
+              body: JSON.stringify({
+                name:name
+              }),
+              headers: {
+                "Content-type": "application/json; charset=UTF-8"
+              }
+      });
+      get()
+    }
+    var ul = document.querySelector("ul")
+    function get(){
+      fetch("/super?data=list").then(async function(response) {
+        let list = await response.json();
+        ul.innerHTML=""
+        console.log(list)
+        list.forEach(l=>{
+          ul.append(createli(l))
+        })
+      }).then(function(data) {
+        console.log(data);
+      }).catch(function(err) {
+        console.log('Fetch Error :-S', err);
+      });
+    }
+    get()
+    deleteElement =(name)=>{
+      fetch("/super", {
+              method: "DELETE",
+              body: JSON.stringify({
+                name:name
+              }),
+              headers: {
+                "Content-type": "application/json; charset=UTF-8"
+              }
+      });
+      get()
+    }
+    
+  </script>
+</body>
+</html>

@@ -456,6 +456,50 @@ app.post('/anime/', jsonParser, async function(req, res) {
   res.send(true)
 });
 
+
+
+appendToFile=(filepath,dat)=>{
+    if(fs.existsSync(filepath)){
+        let rawtxt = fs.readFileSync(filepath,{encoding:"utf-8"})
+        fs.writeFileSync(filepath,`${rawtxt}\n${dat}`.replace(/^\n/,""),{encoding:"utf-8"})
+    }else{
+        fs.writeFileSync(filepath,dat,{encoding:"utf-8"})
+    }
+}
+
+var superlistpath = path.join(__dirname,"superlist.csv")
+
+
+app.get("/super",async function(req,res) {
+    if(req.query.data!="list"){
+       let page= render(fs.readFileSync(path.join(__dirname,"super.html"),{encoding:"utf-8"}),{})
+        res.send(page); 
+    }else{
+        let superlist={}
+        if(fs.existsSync((superlistpath))){
+            superlist=fs.readFileSync(superlistpath,{encoding:"utf-8"}).split(/\n/).map(e=>{
+            let s=e.split(",")
+            return {name:s[0],state:s[1]}}) .filter(e=>e.name!="")
+        }
+        
+        res.json(superlist)
+    }
+    
+})
+app.post("/super",jsonParser,async function(req,res) {
+    if(req.body.name){
+        appendToFile(superlistpath,`${req.body.name},created`)
+    }
+    res.send("ok")
+})
+app.delete("/super",jsonParser,async function(req,res) {
+    if(req.body.name && fs.existsSync(superlistpath)){
+        let content = fs.readFileSync(superlistpath,{encoding:"utf-8"}).split(/\n/).filter(e=>!e.match(RegExp("^"+req.body.name+","))).join("\n")
+        fs.writeFileSync(superlistpath,content,{encoding:"utf-8"})
+    }
+    res.send("ok")
+})
+
 const bot = new Telegraf(process.env.telegramToken)
 
 const createDir=(dir)=>{
@@ -466,14 +510,6 @@ const createDir=(dir)=>{
 
 createDir(path.join(__dirname,"files"));
 
-appendToFile=(filepath,dat)=>{
-    if(fs.existsSync(filepath)){
-        let rawtxt = fs.readFileSync(filepath,{encoding:"utf-8"})
-        fs.writeFileSync(filepath,`${rawtxt}\n${dat}`,{encoding:"utf-8"})
-    }else{
-        fs.writeFileSync(filepath,dat,{encoding:"utf-8"})
-    }
-}
 
 formatJson = (json) =>{
     let count=0;
