@@ -142,8 +142,8 @@
   <script>
   createli=(obj)=>{
       let li = document.createElement("li")
-      li.onclick=()=>{
-        this.classList.toggle("checked")
+      li.onclick=(e)=>{
+        e.target.classList.toggle("checked")
       }
       let span = document.createElement("span")
       let span2 = document.createElement("span")
