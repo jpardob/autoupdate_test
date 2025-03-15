@@ -449,7 +449,7 @@ app.get('/counter', async function(req, res) {
 });
 
 app.get('/getlink',async function(req,res){
-    let externallink=(await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }}))+":90/episodes";
+    let externallink="http://"+(await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }}))+":90/episodes";
     res.redirect(externallink);
 })
 
