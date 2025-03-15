@@ -448,6 +448,11 @@ app.get('/counter', async function(req, res) {
     res.send(page)
 });
 
+app.get('/getlink',async function(req,res){
+    let externallink=(await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }}))+":90/episodes";
+    res.redirect(externallink);
+})
+
 var jsonParser = bodyParser.json()
 //var urlencodedParser = bodyParser.urlencoded({ extended: false })
  
