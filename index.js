@@ -159,7 +159,7 @@ const getPublicLink=async()=>{
         return "http://"+ip+"/episodes"
     }
     if(ip.match(ipv6Regex)){
-        return "http://["+ip+"]:8866/episodes"
+        return "http://["+ip+"]/episodes"
     }
     return "can't get ip"
 }
