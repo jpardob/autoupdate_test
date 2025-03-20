@@ -150,10 +150,20 @@ const notify = ()=>{
     })
 }
 
-const getPublicIp=async()=>{
-    return (await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }}))+":90/episodes"
+var ipv4Regex=/(\d{1,3}\.){3}(\d{1,3})/;
+var ipv6Regex=/([0-9a-f]+:)+[0-9a-f]*/;
+
+const getPublicLink=async()=>{
+    ip=await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }})
+    if(ip.match(ipv4Regex)){
+        return "http://"+ip+"/episodes"
+    }
+    if(ip.match(ipv6Regex)){
+        return "http://["+ip+"]:8866/episodes"
+    }
+    return "can't get ip"
 }
-///getPublicIp()
+///getPublicLink()
 //////////end specific web code//////////
 
 let crc32 =(r)=>{for(var a,o=[],c=0;c<256;c++){a=c;for(var f=0;f<8;f++)a=1&a?3988292384^a>>>1:a>>>1;o[c]=a}for(var n=-1,t=0;t<r.length;t++)n=n>>>8^o[255&(n^r.charCodeAt(t))];return(-1^n)>>>0};
@@ -449,7 +459,7 @@ app.get('/counter', async function(req, res) {
 });
 
 app.get('/getlink',async function(req,res){
-    let externallink="http://"+(await getHTML({ hostname: 'ifconfig.me',  headers: {  'Accept': 'application/json' }}))+":90/episodes";
+    let externallink=getPublicLink();
     res.redirect(externallink);
 })
 
@@ -590,7 +600,7 @@ if(cluster.isWorker){
             ctx.reply(JSON.stringify(ctx.chat))
     })
     bot.hears(/givemethelink/i,async(ctx)=>{
-        let ip = await getPublicIp()
+        let ip = await getPublicLink()
             ctx.reply(ip)
     })
     /////////specific code////////
